@@ -1,0 +1,27 @@
+#!/bin/sh
+set -e
+
+# Write env vars to shiny user's Renviron
+
+# Write env vars # cat <<EOF > /home/shiny/.Renviron
+cat > /srv/shiny-server/gbif-app/.Renviron <<EOF
+
+POSTGRES_HOST=${POSTGRES_HOST}
+POSTGRES_USER=${POSTGRES_USER}
+POSTGRES_PORT=${POSTGRES_PORT}
+POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+POSTGRES_DB=${POSTGRES_DB}
+POSTGRES_SSLMODE=${POSTGRES_SSLMODE}
+SHINY_USER=${SHINY_USER}
+SHINY_PASSWORD=${SHINY_PASSWORD}
+SMTP_PASSWORD=${SMTP_PASSWORD}
+RESEND_API_KEY=${RESEND_API_KEY}
+EOF
+
+#chmod 600 /home/shiny/.Renviron
+chown shiny:shiny /srv/shiny-server/gbif-app/.Renviron
+chmod 600 /srv/shiny-server/gbif-app/.Renviron
+
+echo "--- Renviron written ---"
+# Start Shiny Server
+exec shiny-server
