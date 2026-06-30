@@ -43,13 +43,6 @@ RUN apt-get update && apt-get install -y \
     proj-data \
     && rm -rf /var/lib/apt/lists/*
 
-# Enable color + nicer prompt for all users
-ENV TERM=xterm-256color
-
-RUN echo "alias ls='ls --color=auto'" >> /etc/bash.bashrc && \
-    echo "alias grep='grep --color=auto'" >> /etc/bash.bashrc && \
-    echo "PS1='\[\e[1;32m\]\u@\h\[\e[0m\]:\[\e[1;34m\]\w\[\e[0m\]\$ '" >> /etc/bash.bashrc
-    
 # # ---- remove shiny-server template apps ---
 RUN rm -rf /srv/shiny-server/*
 
@@ -68,24 +61,6 @@ ENV RENV_CONFIG_PAK_ENABLED=TRUE
 ENV RENV_CONFIG_REPOS_OVERRIDE=https://cloud.r-project.org
 RUN R -e "options(renv.verbose = TRUE); renv::restore(prompt = FALSE)"
 
-# ---- Restore with pak debugging ----
-# RUN R -e "options(renv.verbose = TRUE); \
-#  Sys.setenv(RENV_CONFIG_PAK_ENABLED = 'TRUE'); \
-#  lockfile <- renv:::renv_lockfile_load(project = getwd()); \
-#  packages <- names(lockfile[['Packages']]); \
-#  cat('Total packages to install:', length(packages), '\n'); \
-#   for (i in seq_along(packages)) { \
-#    cat(sprintf('Installing %d/%d: %s\n', i, length(packages), packages[i])); \
-#     tryCatch({ \
-#      renv::install(packages[i], prompt = FALSE); \
-#     }, error = function(e) { \
-#      cat('FAILED ON PACKAGE:', packages[i], '\n'); \
-#       cat('Error:', conditionMessage(e), '\n'); \
-#       quit(status = 1); \
-#     }); \
-#   }"
-
-
 # Copy app files
 COPY app.R app.R
 
@@ -96,7 +71,6 @@ COPY shiny-server.conf /etc/shiny-server/shiny-server.conf
 # ---- change file ownership and rew -----
 RUN chown -R shiny:shiny /srv/shiny-server && \
     chmod -R 755 /srv/shiny-server
-
 
 # --- copy shiny_entry and change rew ----
 COPY shiny_entry.sh /usr/local/bin/shiny_entry.sh
