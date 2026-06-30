@@ -4,13 +4,10 @@
 )
 [![pkgdown]()](
 
-)
 [![Docker Build Status]()](
-)
 [![Deploy to DO]()](
-)
 [![Deployed App Status]()](
-)
+[![R-CMD-check](https://github.com/benjaminhlina/biodiversity-app/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/benjaminhlina/biodiversity-app/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 # Global Biodiversity Information Facility (gbif) - app
