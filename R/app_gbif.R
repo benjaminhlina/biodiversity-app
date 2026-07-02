@@ -15,22 +15,14 @@ gbif_app <- function() {
   list2env(start_up(), envir = globalenv())
 
   # ---- ui ------
+
   ui <- shinydashboard::dashboardPage(
-    # # ----- title -----
+    # ----- title -----
     shinydashboard::dashboardHeader(
       title = "Global Biodiversity Information Facility - Appsilon",
-      titleWidth = 500,
-      shiny::tags$li(
-        class = "dropdown",
-        shiny::tags$a(
-          href = "https://github.com/benjaminhlina/gbif-app",
-          target = "_blank",
-          shiny::icon("github", class = "fa-2x"),
-          style = "padding-top: 10px; padding-bottom: 10px;"
-        )
-      )
+      titleWidth = 500
     ),
-    # # ---- sidebar -----
+    # ---- sidebar -----
     shinydashboard::dashboardSidebar(
       width = 275,
       shinydashboard::sidebarMenu(
@@ -39,40 +31,14 @@ gbif_app <- function() {
           "Home",
           tabName = "home",
           icon = shiny::icon("home")
-        ),
-
-        #   shinydashboard::menuItem(
-        #     "Map",
-        #     tabName = "view_map",
-        #     icon = shiny::icon("map")
-        #   ),
-      ),
-      shinyjs::useShinyjs(),
-
-      # # ---- create display panes ----
-      shinydashboard::dashboardBody(
-        # add  analytics
-        # shiny::tags$head(
-
-        #   # ----- add google analytics -----,
-        #   shiny::tags$script(src = "/js/gtag.js"),
-        #   # ---- shiny.tictoc ----
-        #   shiny::tags$script(
-        #     src = "https://cdn.jsdelivr.net/gh/Appsilon/shiny.tictoc@v0.2.0/shiny-tic-toc.min.js"
-        #   ),
-
-        # ),
-        # CSS for fixed footer
-        # app_version_head(),
-        # app_version_label(app_version),
-        # tab itimes
-        shinydashboard::tabItems(
-          shinydashboard::tabItem(tabName = "home", home_tab_ui("home"))
-          # shinydashboard::tabItem(
-          #   tabName = "view_map",
-          #   view_map_ui("view_map")
-          # )
         )
+      ),
+      shinyjs::useShinyjs()
+    ),
+    # ---- body ----
+    shinydashboard::dashboardBody(
+      shinydashboard::tabItems(
+        shinydashboard::tabItem(tabName = "home", home_tab_ui("home"))
       )
     )
   )
