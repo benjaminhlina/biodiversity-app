@@ -12,11 +12,12 @@
 gbif_app <- function() {
   # ---- startup the app -----
 
-  list2env(start_up(), envir = globalenv())
+  # list2env(start_up(), envir = globalenv())
 
   # ---- ui ------
 
   ui <- shinydashboard::dashboardPage(
+    skin = "green",
     # ----- title -----
     shinydashboard::dashboardHeader(
       title = "Global Biodiversity Information Facility - Appsilon",
@@ -28,17 +29,21 @@ gbif_app <- function() {
       shinydashboard::sidebarMenu(
         id = "tabs",
         shinydashboard::menuItem(
-          "Home",
-          tabName = "home",
-          icon = shiny::icon("home")
+          text = "",
+          tabName = "home"
         )
       ),
-      shinyjs::useShinyjs()
+      shinyjs::useShinyjs(),
+      # Modularized panels
+      shiny::conditionalPanel(
+        "input.tabs == 'home'",
+        home_sidebar_ui("home_sidebar")
+      )
     ),
     # ---- body ----
     shinydashboard::dashboardBody(
       shinydashboard::tabItems(
-        shinydashboard::tabItem(tabName = "home", home_tab_ui("home"))
+        shinydashboard::tabItem(tabName = "home", home_tab_ui("home_ui"))
       )
     )
   )
@@ -50,6 +55,11 @@ gbif_app <- function() {
     )
     ram_tracker()
     session$allowReconnect("force")
+
+    home_sidebar_vals <- homey_sidebar_server(
+      "home_sidebar",
+      main_input = input
+    )
   }
 
   # render ui and serve together to create dashboard
