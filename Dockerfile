@@ -2,13 +2,13 @@ FROM rocker/shiny:latest
 
 # https://specs.opencontainers.org/image-spec/annotations/
 LABEL \
-    org.opencontainers.image.authors="Benjamin Hlina <benjamin.hlina@gmail.com>" \
-    org.opencontainers.image.vendor="glatar-app" \
+    org.opencontainers.image.authors="Benjamin L. Hlina <benjamin.hlina@gmail.com>" \
+    org.opencontainers.image.vendor="gbif-app" \
     org.opencontainers.image.version="0.0.0.9999" \
-    org.opencontainers.image.source="https://github.com/benjaminhlina/glatar-app" \
+    org.opencontainers.image.source="https://github.com/benjaminhlina/gbif-app" \
     org.opencontainers.image.licenses="MIT"
 
-# Install system dependencies for R packages
+# ---- Install system dependencies for R packages ---- 
 RUN apt-get update && apt-get install -y \
     bash \
     cmake \
@@ -43,14 +43,14 @@ RUN apt-get update && apt-get install -y \
     proj-data \
     && rm -rf /var/lib/apt/lists/*
 
-# # ---- remove shiny-server template apps ---
+# ---- remove shiny-server template apps ---
 RUN rm -rf /srv/shiny-server/*
 
-# ---- ops for got to install renv ----
+# ---- install renv and pak ----
 RUN R -e "install.packages(c('renv', 'pak'), repos = 'https://cran.rstudio.com')"
 
-# # ---- Set working directory ----
-WORKDIR /srv/shiny-server/GLATAR-App/
+# ---- Set working directory ----
+WORKDIR /srv/shiny-server/gbif-app/
 # ---- Copy renv files ----
 COPY renv.lock renv.lock
 COPY renv/ renv/
@@ -67,8 +67,7 @@ COPY app.R app.R
 # copy shiny-server config file
 COPY shiny-server.conf /etc/shiny-server/shiny-server.conf
 
-
-# ---- change file ownership and rew -----
+# ---- change file ownership and rw access -----
 RUN chown -R shiny:shiny /srv/shiny-server && \
     chmod -R 755 /srv/shiny-server
 
@@ -76,10 +75,10 @@ RUN chown -R shiny:shiny /srv/shiny-server && \
 COPY shiny_entry.sh /usr/local/bin/shiny_entry.sh
 RUN chmod 755 /usr/local/bin/shiny_entry.sh
 
-# ----- installl glatar ----- 
+# ----- installl gbif ----- 
 ARG CACHEBUST=1
 RUN R -e "pak::pak('benjaminhlina/gbif-app')"
-# Expose port
-# USER shiny
+# ---- Expose port and run shiny_entry ----- 
+
 EXPOSE 3838
 CMD ["/usr/local/bin/shiny_entry.sh"]
