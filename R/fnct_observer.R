@@ -21,10 +21,11 @@ exclusive_all_observer <- function(input, session, id) {
     {
       sel <- input[[id]]
       if ("All" %in% sel && length(sel) > 1) {
-        shiny::updateSelectInput(
+        shiny::updateSelectizeInput(
           session,
           id,
-          selected = setdiff(sel, "All")
+          selected = setdiff(sel, "All"),
+          server = TRUE
         )
       }
     },
