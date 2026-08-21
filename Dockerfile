@@ -12,6 +12,7 @@ LABEL \
 RUN apt-get update && apt-get install -y \
     bash \
     cmake \
+    curl \
     g++ \
     gdal-bin \
     git \
@@ -64,7 +65,7 @@ RUN R -e "options(renv.verbose = TRUE); renv::restore(prompt = FALSE)"
 # Copy app files
 COPY app.R app.R
 
-RUN mkdir -p ./db && \
+RUN mkdir -p ./db-test && \
     curl -L -o ./db/gbif.duckdb "https://www.dropbox.com/scl/fi/58jpur6fan54c8kdmfsb8/gbif.duckdb?rlkey=c0m0afsai0bojd4zw3jicaoxv&st=swbupnox&dl=0"
 # copy shiny-server config file
 COPY shiny-server.conf /etc/shiny-server/shiny-server.conf
