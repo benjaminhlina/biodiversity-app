@@ -58,3 +58,5 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             CACHEBUST=${{ github.run_id }}
+          secrets: |
+            github_pat=${{ secrets.GH_PAT_BIODIVERSITY_APP }}
