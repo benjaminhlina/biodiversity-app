@@ -19,19 +19,19 @@ home_sidebar_ui <- function(id) {
       style = "display:none;",
       shiny::conditionalPanel(
         condition = "input.tabs == 'home'",
-        shiny::selectInput(
+        shiny::selectizeInput(
           ns("country_filter"),
           "Select a Country",
           choices = NULL,
           multiple = TRUE
         ),
-        shiny::selectInput(
+        shiny::selectizeInput(
           ns("home_species_filter_gs"),
           "Filter by Scientific Name",
           choices = NULL,
           multiple = TRUE
         ),
-        shiny::selectInput(
+        shiny::selectizeInput(
           ns("home_species_filter_vn"),
           "Filter by Vernacular Name",
           choices = NULL,
@@ -44,13 +44,14 @@ home_sidebar_ui <- function(id) {
 # ----- summmary -----
 
 #' @param id the shiny namespace id name (i.e., `"home_sidebar"`).
+#' @param con a `DBI` conection to, in this case DuckDB database.
 #' @param main_input the shiny input from the main server
 #'
 #' @details `homey_sidebar_server()` provides the home table sidebar server.
 #'
 #' @name homey_sidebar_server
 #' @export
-homey_sidebar_server <- function(id, main_input) {
+home_sidebar_server <- function(id, con, main_input) {
   shiny::moduleServer(id, function(input, output, session) {
     shiny::observe({
       shinyjs::toggle(
@@ -61,6 +62,7 @@ homey_sidebar_server <- function(id, main_input) {
 
     # ---- initalize ------
     initialized <- shiny::reactiveVal(FALSE)
+    updating <- shiny::reactiveVal(FALSE)
 
     # --- get sidebar info -----
     shiny::observeEvent(
@@ -77,11 +79,23 @@ homey_sidebar_server <- function(id, main_input) {
 
         purrr::walk(filters, ~ exclusive_all_observer(input, session, .x))
 
-        # ----- create country choices ----
+        # ----- create species choises -----
 
         # Country Drop-down
 
-        shiny::updateSelectInput(
+        sci_name <- get_dropdown_options(
+          con,
+          "tbl_occ",
+          "scientific_name",
+          # filter_col = "country"
+        )
+        vern_name <- get_dropdown_options(
+          con,
+          "tbl_occ",
+          "vernacular_name",
+          # filter_col = "country"
+        )
+        shiny::updateSelectizeInput(
           session,
           "country_filter",
           choices = c("All", countries$title),
@@ -90,24 +104,57 @@ homey_sidebar_server <- function(id, main_input) {
 
         # Species Drop-down
 
-        shiny::updateSelectInput(
+        shiny::updateSelectizeInput(
           session,
           "home_species_filter_gs",
-          choices = c("All"),
-          selected = "All"
+          choices = c(
+            "All",
+            sci_name
+          ),
+          selected = "All",
+          server = TRUE
         )
         # commmon name drop drown
-        shiny::updateSelectInput(
+        shiny::updateSelectizeInput(
           session,
           "home_species_filter_vn",
           choices = c("All"),
-          selected = "All"
+          selected = "All",
+          server = TRUE
         )
         # Update y summary  variable choices
 
         # set inalize as true to make this trigger once it is hit
         initialized(TRUE)
       },
+      ignoreInit = FALSE
+    )
+
+    shiny::observeEvent(
+      input$country_filter,
+      {
+        shiny::req(initialized())
+        refresh_filters(input, session, con, updating, "country_filter")
+      },
+      ignoreInit = TRUE
+    )
+
+    shiny::observeEvent(
+      input$home_species_filter_gs,
+      {
+        shiny::req(initialized())
+        refresh_filters(input, session, con, updating, "home_species_filter_gs")
+      },
+      ignoreInit = TRUE
+    )
+
+    shiny::observeEvent(
+      input$home_species_filter_vn,
+      {
+        shiny::req(initialized())
+        refresh_filters(input, session, con, updating, "home_species_filter_vn")
+      },
+      ignoreInit = TRUE
     )
 
     # ----- export what we need from the server ----
