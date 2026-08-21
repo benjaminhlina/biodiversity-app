@@ -12,7 +12,6 @@ Imports:
     DBI,
     dbplyr,
     dplyr,
-    DT,
     duckdb,
     ggplot2,
     ggtext,
