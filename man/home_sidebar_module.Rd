@@ -3,16 +3,25 @@
 \name{home_sidebar_module}
 \alias{home_sidebar_module}
 \alias{home_sidebar_ui}
+\alias{home_sidebar_server}
 \title{Home Sidebar}
 \usage{
 home_sidebar_ui(id)
+
+home_sidebar_server(id, con, main_input)
 }
 \arguments{
 \item{id}{the shiny namespace id name (i.e., \code{"home_sidebar"}).}
+
+\item{con}{a \code{DBI} conection to, in this case DuckDB database.}
+
+\item{main_input}{the shiny input from the main server}
 }
 \description{
 Provides the sidebar for the home table pane.
 }
 \details{
 \code{home_sidebar_ui()} provides the home sidebar user interface.
+
+\code{home_sidebar_server()} provides the home table sidebar server.
 }

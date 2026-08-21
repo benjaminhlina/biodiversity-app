@@ -47,9 +47,9 @@ home_sidebar_ui <- function(id) {
 #' @param con a `DBI` conection to, in this case DuckDB database.
 #' @param main_input the shiny input from the main server
 #'
-#' @details `homey_sidebar_server()` provides the home table sidebar server.
+#' @details `home_sidebar_server()` provides the home table sidebar server.
 #'
-#' @name homey_sidebar_server
+#' @name home_sidebar_module
 #' @export
 home_sidebar_server <- function(id, con, main_input) {
   shiny::moduleServer(id, function(input, output, session) {
