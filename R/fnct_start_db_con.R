@@ -20,7 +20,6 @@ start_db_con <- function(db_name = NULL) {
   con <- DBI::dbConnect(
     duckdb::duckdb(),
     dbdir = here::here(
-      'inst',
       'db',
       db_name
     )
