@@ -81,8 +81,9 @@ RUN chmod 755 /usr/local/bin/shiny_entry.sh
 # ----- installl gbif ----- 
 ARG CACHEBUST=1
 
-RUN --mount=type=secret,id=github_pat \
-    GITHUB_PAT=$(cat /run/secrets/github_pat) R -e "pak::pak('benjaminhlina/biodiversity-app')"
+COPY . .
+RUN R -e "pak::pkg_install('local::.', dependencies = TRUE)"
+
 # ---- Expose port and run shiny_entry ----- 
 
 EXPOSE 3838
