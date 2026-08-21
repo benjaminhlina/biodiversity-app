@@ -11,6 +11,7 @@ LABEL \
 # ---- Install system dependencies for R packages ---- 
 RUN apt-get update && apt-get install -y \
     bash \
+    build-essential \
     cmake \
     curl \
     g++ \
@@ -24,6 +25,7 @@ RUN apt-get update && apt-get install -y \
     libfribidi-dev \
     libgeos-dev \
     libgdal-dev \
+    libgomp1 \
     libharfbuzz-dev \
     libicu-dev \
     libjpeg-dev \

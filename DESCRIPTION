@@ -13,30 +13,19 @@ Imports:
     dbplyr,
     dplyr,
     duckdb,
-    ggplot2,
-    ggtext,
     glue,
     here,
     htmltools,
     httr2,
-    janitor,
     jsonlite,
     leaflet,
     lobstr,
-    openxlsx,
     purrr,
-    readxl,
     rlang,
     shiny,
     shinycssloaders,
     shinydashboard,
-    shinyjs,
-    stringdist,
-    stringr,
-    tibble,
-    tidyselect,
-    validate,
-    writexl
+    shinyjs
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 8.0.0
 Depends: 
