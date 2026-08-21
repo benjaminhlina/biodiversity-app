@@ -12,7 +12,7 @@
 gbif_app <- function() {
   # ---- startup the app -----
 
-  # list2env(start_up(), envir = globalenv())
+  list2env(start_up(), envir = globalenv())
 
   # ---- ui ------
 
@@ -56,7 +56,7 @@ gbif_app <- function() {
     ram_tracker()
     session$allowReconnect("force")
 
-    home_sidebar_vals <- homey_sidebar_server(
+    home_sidebar_vals <- home_sidebar_server(
       "home_sidebar",
       main_input = input
     )
