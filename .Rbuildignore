@@ -7,3 +7,10 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^gbif\.duckdb$
+^app\.R$
+^data-raw$
+^docker-compose\.yaml$
+^Dockerfile$
+^nginx\.conf$
+^shiny_entry\.sh$
+^shiny-server\.conf$
