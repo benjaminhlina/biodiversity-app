@@ -7,3 +7,5 @@
 **/*.quarto_ipynb
 data-raw/data_explore.R
 .DS_Store
+data-raw/data_explore_aug.R
+data-raw/move_to_duck_db.R
