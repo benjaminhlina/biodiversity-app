@@ -57,7 +57,8 @@ gbif_app <- function() {
     session$allowReconnect("force")
 
     home_sidebar_vals <- home_sidebar_server(
-      "home_sidebar",
+      con = con,
+      id = "home_sidebar",
       main_input = input
     )
   }
