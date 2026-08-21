@@ -7,7 +7,6 @@
 #'
 #' @export
 start_up <- function() {
-  con <- start_db_con()
   # ---- get _valid_values from db -------
 
   app_version <- "0.1.0"
@@ -21,7 +20,6 @@ start_up <- function() {
   # gtag_path <- system.file("js", package = "glatar")
 
   startup <- list(
-    con = con,
     app_version = app_version
     # naming_conventions = naming_conventions,
     # nice_name_lookup = nice_name_lookup
