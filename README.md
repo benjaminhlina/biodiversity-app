@@ -1,13 +1,10 @@
 
 <!-- badges: start -->
-[![R-CMD-check]()](
-)
-[![pkgdown]()](
-
-[![Docker Build Status]()](
-[![Deploy to DO]()](
-[![Deployed App Status]()](
 [![R-CMD-check](https://github.com/benjaminhlina/biodiversity-app/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/benjaminhlina/biodiversity-app/actions/workflows/R-CMD-check.yaml)
+[![Build Docker Image](https://github.com/benjaminhlina/biodiversity-app/actions/workflows/build_docker.yaml/badge.svg)](https://github.com/benjaminhlina/biodiversity-app/actions/workflows/build_docker.yaml)
+[![Deploy to DO]()]
+[![Deployed App Status]()]
+
 <!-- badges: end -->
 
 # Global Biodiversity Information Facility (gbif) - app
