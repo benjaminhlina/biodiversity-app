@@ -1,9 +1,10 @@
-Package: gbif
+Package: gbifapp
 Title: Shiny app that interfaces with biodiversity data
 Version: 0.0.0.9000
 Authors@R: 
      person("Benjamin L.", "Hlina", "benjamin.Hlina@gmail.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Description: A shiny app that interfaces with Global Biodiversity Information Facility database 
+             to produce a seemless tool to understand biodiversity in Poland and around the world. 
 License: CC0
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

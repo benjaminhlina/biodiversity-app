@@ -1,5 +1,3 @@
-# ----- glatar app ----
-library(gbif)
+# ----- gbif app ----
+library(gbifapp)
 gbif_app()
-
-# ---- run additonal apps -----
