@@ -7,6 +7,35 @@ Description: A shiny app that interfaces with Global Biodiversity Information Fa
              to produce a seemless tool to understand biodiversity in Poland and around the world. 
 License: CC0
 Encoding: UTF-8
+Imports: 
+    cli,
+    DBI,
+    dbplyr,
+    dplyr,
+    DT,
+    ggplot2,
+    ggtext,
+    glue,
+    htmltools,
+    httr2,
+    janitor,
+    jsonlite,
+    leaflet,
+    lobstr,
+    openxlsx,
+    purrr,
+    readxl,
+    rlang,
+    shiny,
+    shinycssloaders,
+    shinydashboard,
+    shinyjs,
+    stringdist,
+    stringr,
+    tibble,
+    tidyselect,
+    validate,
+    writexl
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 8.0.0
 Depends: 
