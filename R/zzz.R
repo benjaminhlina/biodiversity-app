@@ -1,0 +1,10 @@
+utils::globalVariables(
+  c(
+    '.data',
+    'con',
+    'countries',
+    'country',
+    'scientific_name',
+    'vernacular_name'
+  )
+)
