@@ -80,7 +80,7 @@ RUN chmod 755 /usr/local/bin/shiny_entry.sh
 
 # ----- installl gbif ----- 
 ARG CACHEBUST=1
-RUN R -e "pak::pak('benjaminhlina/gbif-app')"
+RUN R -e "pak::pak('benjaminhlina/biodiversity-app')"
 # ---- Expose port and run shiny_entry ----- 
 
 EXPOSE 3838
