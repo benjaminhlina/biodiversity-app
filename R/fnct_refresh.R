@@ -5,6 +5,12 @@
 #' @param con a DBI/duckdb connection
 #' @param updating a `reactiveVal()` used as a lock to prevent circular updates
 #'
+#' @details
+#' `refresh_species_by_country()` creates updated filters based on changes in the
+#' country selected.
+#'
+#'
+#' @name refresh_functions
 #' @export
 refresh_species_by_country <- function(input, session, con, updating) {
   if (updating()) {
@@ -25,33 +31,62 @@ refresh_species_by_country <- function(input, session, con, updating) {
   }
 
   # ---- Extract choices using get_dropdown options -----
-  opts_sci <- get_dropdown_options(
-    tbl_name = tbl_occ,
-    selcted_countries = country_sel,
-    value_col = "scientific_name"
-  )
-  opts_vn <- get_dropdown_options(
-    tbl_name = tbl_occ,
-    selcted_countries = country_sel,
-    value_col = "vernacular_name"
+  val_cols <- c(
+    "scientific_name",
+    "vernacular_name"
   )
 
-  # ---- Update choices with ------
-  shiny::updateSelectizeInput(
-    session,
+  opts_list <- purrr::map(
+    val_cols,
+    ~ get_dropdown_options(
+      tbl_name = tbl_occ,
+      selcted_countries = country_sel,
+      value_col = .x
+    )
+  )
+
+  # ----- loop over selections update -----
+
+  filter_names <- c(
     "home_species_filter_gs",
-    choices = c("All", opts_sci),
-    selected = "All",
-    server = TRUE
+    "home_species_filter_vn"
   )
-
-  shiny::updateSelectizeInput(
-    session,
-    "home_species_filter_vn",
-    choices = c("All", opts_vn),
-    selected = "All",
-    server = TRUE
+  # ---- Update choices with ------
+  purrr::pwalk(
+    list(filter_names, opts_list),
+    function(filter_id, choices) {
+      refresh_selection(
+        session,
+        filter_id,
+        choices
+      )
+    }
   )
 
   invisible(NULL)
+}
+
+# ----- refresh_selection -----
+
+#' @param session the module's `session` object
+#' @param con a DBI/duckdb connection
+#' @param updating a `reactiveVal()` used as a lock to prevent circular updates
+#'
+#' @name refresh_functions
+#' @export
+
+refresh_selection <- function(session, name, options) {
+  updated_input <- shiny::updateSelectizeInput(
+    session,
+    name,
+    choices = c("All", options),
+    selected = "All",
+    server = TRUE,
+    options = list(
+      maxOptions = 100,
+      placeholder = "Type to search species...",
+      openOnFocus = FALSE
+    )
+  )
+  return(updated_input)
 }

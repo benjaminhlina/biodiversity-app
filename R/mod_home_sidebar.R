@@ -83,7 +83,12 @@ home_sidebar_server <- function(id, con, main_input) {
           session,
           "country_filter",
           choices = c("All", countries$title),
-          selected = "Poland"
+          selected = "Poland",
+          options = list(
+            maxOptions = 50,
+            placeholder = "Type to select countries....",
+            openOnFocus = FALSE
+          )
         )
         initialized(TRUE)
       },
