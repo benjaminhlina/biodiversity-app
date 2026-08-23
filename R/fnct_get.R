@@ -36,3 +36,49 @@ get_dropdown_options <- function(
 
   return(result)
 }
+
+# ----- get occ data -----
+#' @param con a databse connection
+#'
+#' @details
+#' `get_occ_data()` selects and returns a query for the map data
+#'
+#' @name get_functions
+#' @export
+
+get_occ_data <- function(con) {
+  results <- tbl(con, "tbl_occ") |>
+    dplyr::select(
+      id,
+      scientific_name,
+      vernacular_name,
+      individual_count,
+      life_stage,
+      country,
+      continent,
+      longitude_decimal,
+      latitude_decimal,
+      event_date,
+      year,
+      month_abb,
+      habitat
+    )
+
+  return(results)
+}
+
+
+# ----- get media data  -----
+#' @param con a database connection
+#'
+#' @details
+#' `get_media_data()` selects and returns a query for the map data
+#'
+#' @name get_functions
+#' @export
+
+get_media_data <- function(con) {
+  results <- tbl(con, 'tbl_multimedia') |>
+    dplyr::select(id, identifier, creator)
+  return(results)
+}
