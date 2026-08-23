@@ -19,3 +19,25 @@ home_tab_ui <- function(id) {
     )
   )
 }
+
+home_server <- function(id, con, main_input, home_sidebar_vals) {
+  shiny::moduleServer(id, function(input, output, session) {
+    shiny::observe({
+      shinyjs::toggle(
+        id = "home_ui",
+        condition = main_input$tabs == "home"
+      )
+    })
+
+    output$map <- leaflet::renderLeaflet({
+      # Check if the table exists before proceeding
+      if (!"tbl_location" %in% DBI::dbListTables(con)) {
+        return(
+          leaflet::leaflet() |>
+            leaflet::addTiles() |>
+            leaflet::addMarkers(lng = 0, lat = 0, popup = "No Data")
+        )
+      }
+    })
+  })
+}
