@@ -8,77 +8,109 @@
 #' Each function creates a SQL string that is excuted on a
 #' given table in the database.
 #'
-#' @param tbl_name a given name for the a table of interest in the database.
-#' @param selcted_countries a given name for the countries selected.
-#' @param value_col a given name for the column of interest e.g., `scientific_name`.
+#'
+
+#' @param con a database connection.
+#' @param input a input object produced by a sidebar.
 #'
 #' @details
-#' `get_dropdown_options()` gets the options and values for the dropdowns. It
-#' functions based on which countries are selected.
-#'
+#' `get_map_data()` selects and returns map data to be ploted on the map
 #' @name get_functions
 #' @export
 
-get_dropdown_options <- function(
-  tbl_name,
-  selcted_countries,
-  value_col
-) {
-  result <- tbl_name |>
-    dplyr::distinct(.data[[value_col]]) |>
-    dplyr::filter(!is.na(.data[[value_col]])) |>
-    dplyr::pull(.data[[value_col]]) |>
-    sort()
+get_map_data <- function(con, input) {
+  cf <- input$country_filter
+  spf <- input$species_filter
 
-  cli::cli_alert_info(
-    "Selected {.val {length(result)}} number of species for {.val {selcted_countries}}"
+  # ---- get occ data ----
+  tbl_occ <- get_tbl(
+    con,
+    "tbl_occ",
+    select = c(
+      "id",
+      "scientific_name",
+      "vernacular_name",
+      "individual_count",
+      "life_stage",
+      "sex",
+      "country",
+      "continent",
+      "longitude_decimal",
+      "latitude_decimal",
+      "event_date",
+      "year",
+      "month_abb",
+      "habitat"
+    )
   )
 
-  return(result)
-}
+  # get spp data -----
+  tbl_spp <- get_tbl(con, "tbl_spp")
 
-# ----- get occ data -----
-#' @param con a databse connection
-#'
-#' @details
-#' `get_occ_data()` selects and returns a query for the map data
-#'
-#' @name get_functions
-#' @export
+  filters <- c(
+    "cf",
+    "spf"
+  )
 
-get_occ_data <- function(con) {
-  results <- tbl(con, "tbl_occ") |>
-    dplyr::select(
-      id,
-      scientific_name,
-      vernacular_name,
-      individual_count,
-      life_stage,
-      country,
-      continent,
-      longitude_decimal,
-      latitude_decimal,
-      event_date,
-      year,
-      month_abb,
-      habitat
+  all_country_selected <- any(c("", "All") %in% input$country_filter) ||
+    is.null(input$country_filter)
+
+  all_spp_selected <- any(c("", "All") %in% input$species_filter) ||
+    is.null(input$species_filter)
+
+  # combine species and
+  occ_data <- tbl_occ |>
+    dplyr::left_join(tbl_spp)
+
+  if (!all_country_selected) {
+    occ_data <- occ_data |>
+      dplyr::filter(country %in% !!input$country_filter)
+
+    # Species filter applied ONLY when country is filtered
+    if (!all_spp_selected) {
+      occ_data <- occ_data |>
+        dplyr::filter(scientific_name %in% !!input$species_filter)
+    }
+  }
+
+  cli::cli_alert_info(
+    "Queried data for {.val {input$country_filter}} country(s) for the following species {.val {input$species_filter}}"
+  )
+
+  tbl_mm <- get_tbl(
+    con,
+    'tbl_multimedia',
+    select = c(
+      "id",
+      "identifier",
+      "creator"
     )
+  )
 
-  return(results)
+  filtered_final_dat <- occ_data |>
+    dplyr::left_join(tbl_mm)
+
+  return(filtered_final_dat)
 }
 
 
-# ----- get media data  -----
-#' @param con a database connection
+# ----- get_tbl -----
+
+#' @param tbl_name a given name for the a table of interest in the database.
+#' @param select a `vector` of columns to select.
 #'
 #' @details
-#' `get_media_data()` selects and returns a query for the map data
+#' `get_tbl()` selects and returns a query for the given table
 #'
 #' @name get_functions
 #' @export
 
-get_media_data <- function(con) {
-  results <- tbl(con, 'tbl_multimedia') |>
-    dplyr::select(id, identifier, creator)
+get_tbl <- function(con, tbl_name, select = NULL) {
+  results <- dplyr::tbl(con, tbl_name)
+
+  if (!is.null(select)) {
+    results <- results |>
+      dplyr::select(dplyr::all_of(select))
+  }
   return(results)
 }

@@ -2,25 +2,22 @@
 % Please edit documentation in R/fnct_get.R
 \name{get_functions}
 \alias{get_functions}
-\alias{get_dropdown_options}
-\alias{get_occ_data}
-\alias{get_media_data}
+\alias{get_map_data}
+\alias{get_tbl}
 \title{Get functions}
 \usage{
-get_dropdown_options(tbl_name, selcted_countries, value_col)
+get_map_data(con, input)
 
-get_occ_data(con)
-
-get_media_data(con)
+get_tbl(con, tbl_name, select = NULL)
 }
 \arguments{
+\item{con}{a database connection.}
+
+\item{input}{a input object produced by a sidebar.}
+
 \item{tbl_name}{a given name for the a table of interest in the database.}
 
-\item{selcted_countries}{a given name for the countries selected.}
-
-\item{value_col}{a given name for the column of interest e.g., \code{scientific_name}.}
-
-\item{con}{a database connection}
+\item{select}{a \code{vector} of columns to select.}
 }
 \description{
 These functions are very important as they create SQL to
@@ -30,10 +27,7 @@ Each function creates a SQL string that is excuted on a
 given table in the database.
 }
 \details{
-\code{get_dropdown_options()} gets the options and values for the dropdowns. It
-functions based on which countries are selected.
+\code{get_map_data()} selects and returns map data to be ploted on the map
 
-\code{get_occ_data()} selects and returns a query for the map data
-
-\code{get_media_data()} selects and returns a query for the map data
+\code{get_tbl()} selects and returns a query for the given table
 }
