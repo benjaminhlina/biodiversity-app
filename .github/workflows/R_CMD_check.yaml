@@ -21,6 +21,7 @@ jobs:
         config:
           - {os: macos-latest,   r: 'release'}
           - {os: windows-latest, r: 'release'}
+          - {os: ubuntu-latest,  r: 'release'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -35,13 +36,30 @@ jobs:
         with:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
+   
+      - name: Configure Fast Linux Binaries
+        if: runner.os == 'Linux'
+        run: |
+          echo "options(repos = c(PPM = 'https://packagemanager.posit.co/cran/__linux__/jammy/latest'))" >> ~/.Rprofile
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck
+          extra-packages: any::rcmdcheck, any::pkgbuild
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
+          
+      - name: Build Package Tarball
+        if: runner.os == 'Linux'
+        run: Rscript -e "pkgbuild::build(dest_path = '.')"
+
+      - name: Upload Package Tarball
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: r-package-tarball
+          path: '*.tar.gz'
+          retention-days: 1
