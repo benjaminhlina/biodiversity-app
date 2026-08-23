@@ -18,6 +18,10 @@ refresh_selection(session, name, options)
 \item{con}{a DBI/duckdb connection}
 
 \item{updating}{a \code{reactiveVal()} used as a lock to prevent circular updates}
+
+\item{name}{the namespace name of the filter}
+
+\item{options}{a \code{vector} containsing the choices}
 }
 \description{
 Refresh sidebar filter choices based on current selections
@@ -25,4 +29,7 @@ Refresh sidebar filter choices based on current selections
 \details{
 \code{refresh_species_by_country()} creates updated filters based on changes in the
 country selected.
+
+\code{refresh_selection()} creates an updated selctize input for
+a given filter such as species and commmon name.
 }

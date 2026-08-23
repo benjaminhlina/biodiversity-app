@@ -9,7 +9,7 @@
 #' given table in the database.
 #'
 #' @param tbl_name a given name for the a table of interest in the database.
-#' @param selected_countires a given name for the countries selected.
+#' @param selcted_countries a given name for the countries selected.
 #' @param value_col a given name for the column of interest e.g., `scientific_name`.
 #'
 #' @details

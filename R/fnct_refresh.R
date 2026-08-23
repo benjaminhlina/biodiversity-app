@@ -69,8 +69,12 @@ refresh_species_by_country <- function(input, session, con, updating) {
 # ----- refresh_selection -----
 
 #' @param session the module's `session` object
-#' @param con a DBI/duckdb connection
-#' @param updating a `reactiveVal()` used as a lock to prevent circular updates
+#' @param name the namespace name of the filter
+#' @param options a `vector` containsing the choices
+#'
+#' @details
+#' `refresh_selection()` creates an updated selctize input for
+#' a given filter such as species and commmon name.
 #'
 #' @name refresh_functions
 #' @export

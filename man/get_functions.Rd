@@ -10,9 +10,9 @@ get_dropdown_options(tbl_name, selcted_countries, value_col)
 \arguments{
 \item{tbl_name}{a given name for the a table of interest in the database.}
 
-\item{value_col}{a given name for the column of interest e.g., \code{scientific_name}.}
+\item{selcted_countries}{a given name for the countries selected.}
 
-\item{selected_countires}{a given name for the countries selected.}
+\item{value_col}{a given name for the column of interest e.g., \code{scientific_name}.}
 }
 \description{
 These functions are very important as they create SQL to
