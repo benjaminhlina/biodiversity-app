@@ -8,6 +8,5 @@ start_up()
 }
 \description{
 This function, which has no arguments, starts the database
-connection, gets \verb{valid_values`` for validation, gets }nice_names` for properly displaying tables, creates
-credientials, and and file location for resources.
+connection, dispalys the ap verions.
 }

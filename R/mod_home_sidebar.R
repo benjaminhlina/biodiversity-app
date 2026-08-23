@@ -26,16 +26,14 @@ home_sidebar_ui <- function(id) {
           multiple = TRUE
         ),
         shiny::selectizeInput(
-          ns("home_species_filter_gs"),
-          "Filter by Scientific Name",
+          ns("species_search"),
+          label = "Search Taxa",
           choices = NULL,
-          multiple = TRUE
-        ),
-        shiny::selectizeInput(
-          ns("home_species_filter_vn"),
-          "Filter by Vernacular Name",
-          choices = NULL,
-          multiple = TRUE
+          options = list(
+            placeholder = "Type to search by species...",
+            maxOptions = 50,
+            openOnFocus = FALSE
+          )
         )
       )
     )
@@ -72,9 +70,9 @@ home_sidebar_server <- function(id, con, main_input) {
         shiny::req(!initialized())
 
         filters <- c(
-          "country_filter",
-          "home_species_filter_gs",
-          "home_species_filter_vn"
+          "country_filter"
+          # "home_species_filter_gs",
+          # "home_species_filter_vn"
         )
 
         purrr::walk(filters, ~ exclusive_all_observer(input, session, .x))
@@ -91,6 +89,8 @@ home_sidebar_server <- function(id, con, main_input) {
           )
         )
         initialized(TRUE)
+        # Trigger initial species query using default selected country
+        search_species(session, input, con)
       },
       ignoreInit = FALSE
     )
@@ -100,7 +100,7 @@ home_sidebar_server <- function(id, con, main_input) {
       input$country_filter,
       {
         shiny::req(initialized())
-        refresh_species_by_country(input, session, con, updating)
+        search_species(session, input, con)
       },
       ignoreInit = TRUE
     )
@@ -109,8 +109,7 @@ home_sidebar_server <- function(id, con, main_input) {
     # we need country and species filters
     return(list(
       country = shiny::reactive(input$country_filter),
-      species_filter_gs = shiny::reactive(input$home_species_filter_gs),
-      species_filter_vn = shiny::reactive(input$home_species_filter_vn)
+      species_filter = shiny::reactive(input$search_bar)
     ))
   })
 }
