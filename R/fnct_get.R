@@ -8,11 +8,9 @@
 #' Each function creates a SQL string that is excuted on a
 #' given table in the database.
 #'
-#' @param con a valid `DBI` connection to a DuckDB database.
 #' @param tbl_name a given name for the a table of interest in the database.
+#' @param selected_countires a given name for the countries selected.
 #' @param value_col a given name for the column of interest e.g., `scientific_name`.
-#' @param filter_col a given name of for the column used to filter e.g., `country`.
-#' @param filter_val a given name for the object that will be filtered against.
 #'
 #' @details
 #' `get_dropdown_options()` gets the options and values for the dropdowns. It
@@ -22,27 +20,19 @@
 #' @export
 
 get_dropdown_options <- function(
-  con,
   tbl_name,
-  value_col,
-  filter_col = NULL,
-  filter_val = NULL
+  selcted_countries,
+  value_col
 ) {
-  table <- dplyr::tbl(con, tbl_name)
-
-  if (
-    !is.null(filter_col) && !is.null(filter_val) && !("All" %in% filter_val)
-  ) {
-    tbl_fil <- table |>
-      dplyr::filter(.data[[filter_col]] %in% filter_val)
-  } else {
-    tbl_fil <- table
-  }
-
-  result <- tbl_fil |>
+  result <- tbl_name |>
     dplyr::distinct(.data[[value_col]]) |>
+    dplyr::filter(!is.na(.data[[value_col]])) |>
     dplyr::pull(.data[[value_col]]) |>
     sort()
+
+  cli::cli_alert_info(
+    "Selected {.val {length(result)}} number of species for {.val {selcted_countries}}"
+  )
 
   return(result)
 }
