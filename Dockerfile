@@ -81,11 +81,13 @@ COPY shiny_entry.sh /usr/local/bin/shiny_entry.sh
 RUN chmod 755 /usr/local/bin/shiny_entry.sh
 
 # ----- installl gbif ----- 
-ARG CACHEBUST=1
 
-COPY . .
-RUN R -e "pak::pkg_install('local::.', dependencies = TRUE)"
+# Copy the .tar.gz bundle created by the check step
+COPY *.tar.gz /tmp/package.tar.gz
 
+# Install package dependencies directly from the bundle, then install the package
+RUN R -e "pak::pkg_install('deps::/tmp/package.tar.gz'); pak::pkg_install('/tmp/package.tar.gz'); pak::cache_clean()" \
+    && rm /tmp/package.tar.gz
 # ---- Expose port and run shiny_entry ----- 
 
 EXPOSE 3838
