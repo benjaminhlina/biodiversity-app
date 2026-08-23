@@ -71,26 +71,28 @@ home_sidebar_server <- function(id, con, main_input) {
 
         filters <- c(
           "country_filter"
-          # "home_species_filter_gs",
-          # "home_species_filter_vn"
         )
 
         purrr::walk(filters, ~ exclusive_all_observer(input, session, .x))
+
+        initial_country <- "Poland"
+        # Correct syntax
+        shiny::freezeReactiveValue(input, "species_search")
 
         shiny::updateSelectizeInput(
           session,
           "country_filter",
           choices = c("All", countries$title),
-          selected = "Poland",
+          selected = initial_country,
           options = list(
             maxOptions = 50,
             placeholder = "Type to select countries....",
             openOnFocus = FALSE
           )
         )
-        initialized(TRUE)
+        # initialized(TRUE)
         # Trigger initial species query using default selected country
-        search_species(session, input, con)
+        search_species(session, input, con, selected_country = initial_country)
       },
       ignoreInit = FALSE
     )
@@ -99,7 +101,11 @@ home_sidebar_server <- function(id, con, main_input) {
     shiny::observeEvent(
       input$country_filter,
       {
-        shiny::req(initialized())
+        if (!initialized()) {
+          initialized(TRUE)
+          return()
+        }
+        shiny::freezeReactiveValue(input, "species_search")
         search_species(session, input, con)
       },
       ignoreInit = TRUE
@@ -107,9 +113,13 @@ home_sidebar_server <- function(id, con, main_input) {
 
     # ----- export what we need from the server ----
     # we need country and species filters
-    return(list(
-      country = shiny::reactive(input$country_filter),
-      species_filter = shiny::reactive(input$search_bar)
-    ))
+    return(
+      shiny::reactive({
+        list(
+          country_filter = input$country_filter,
+          species_filter = input$species_search
+        )
+      })
+    )
   })
 }

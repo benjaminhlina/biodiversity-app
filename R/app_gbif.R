@@ -63,8 +63,8 @@ gbif_app <- function() {
     )
 
     home_info <- home_server(
-      "home",
-      con,
+      id = "home",
+      con = con,
       main_input = input,
       home_sidebar_vals = home_sidebar_vals
     )
