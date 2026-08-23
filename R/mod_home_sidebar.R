@@ -79,87 +79,29 @@ home_sidebar_server <- function(id, con, main_input) {
 
         purrr::walk(filters, ~ exclusive_all_observer(input, session, .x))
 
-        # ----- create species choises -----
-
-        # Country Drop-down
-
-        sci_name <- get_dropdown_options(
-          con,
-          "tbl_occ",
-          "scientific_name",
-          # filter_col = "country"
-        )
-        vern_name <- get_dropdown_options(
-          con,
-          "tbl_occ",
-          "vernacular_name",
-          # filter_col = "country"
-        )
         shiny::updateSelectizeInput(
           session,
           "country_filter",
           choices = c("All", countries$title),
           selected = "Poland"
         )
-
-        # Species Drop-down
-
-        shiny::updateSelectizeInput(
-          session,
-          "home_species_filter_gs",
-          choices = c(
-            "All",
-            sci_name
-          ),
-          selected = "All",
-          server = TRUE
-        )
-        # commmon name drop drown
-        shiny::updateSelectizeInput(
-          session,
-          "home_species_filter_vn",
-          choices = c("All"),
-          selected = "All",
-          server = TRUE
-        )
-        # Update y summary  variable choices
-
-        # set inalize as true to make this trigger once it is hit
         initialized(TRUE)
       },
       ignoreInit = FALSE
     )
 
+    # --- Update species when Country changes ---
     shiny::observeEvent(
       input$country_filter,
       {
         shiny::req(initialized())
-        refresh_filters(input, session, con, updating, "country_filter")
-      },
-      ignoreInit = TRUE
-    )
-
-    shiny::observeEvent(
-      input$home_species_filter_gs,
-      {
-        shiny::req(initialized())
-        refresh_filters(input, session, con, updating, "home_species_filter_gs")
-      },
-      ignoreInit = TRUE
-    )
-
-    shiny::observeEvent(
-      input$home_species_filter_vn,
-      {
-        shiny::req(initialized())
-        refresh_filters(input, session, con, updating, "home_species_filter_vn")
+        refresh_species_by_country(input, session, con, updating)
       },
       ignoreInit = TRUE
     )
 
     # ----- export what we need from the server ----
-    # we need grouping and hist variables we also need the function
-
+    # we need country and species filters
     return(list(
       country = shiny::reactive(input$country_filter),
       species_filter_gs = shiny::reactive(input$home_species_filter_gs),
