@@ -24,8 +24,7 @@ exclusive_all_observer <- function(input, session, id) {
         shiny::updateSelectizeInput(
           session,
           id,
-          selected = setdiff(sel, "All"),
-          server = TRUE
+          selected = setdiff(sel, "All")
         )
       }
     },
