@@ -5,24 +5,14 @@
 \alias{get_dropdown_options}
 \title{Get functions}
 \usage{
-get_dropdown_options(
-  con,
-  tbl_name,
-  value_col,
-  filter_col = NULL,
-  filter_val = NULL
-)
+get_dropdown_options(tbl_name, selcted_countries, value_col)
 }
 \arguments{
-\item{con}{a valid \code{DBI} connection to a DuckDB database.}
-
 \item{tbl_name}{a given name for the a table of interest in the database.}
 
 \item{value_col}{a given name for the column of interest e.g., \code{scientific_name}.}
 
-\item{filter_col}{a given name of for the column used to filter e.g., \code{country}.}
-
-\item{filter_val}{a given name for the object that will be filtered against.}
+\item{selected_countires}{a given name for the countries selected.}
 }
 \description{
 These functions are very important as they create SQL to

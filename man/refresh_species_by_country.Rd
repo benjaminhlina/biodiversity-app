@@ -14,9 +14,6 @@ refresh_species_by_country(input, session, con, updating)
 \item{con}{a DBI/duckdb connection}
 
 \item{updating}{a \code{reactiveVal()} used as a lock to prevent circular updates}
-
-\item{changed}{character; the id of the input that triggered this refresh
-( \code{"home_species_filter_gs"}, or \code{"home_species_filter_vn"})}
 }
 \description{
 Refresh sidebar filter choices based on current selections
