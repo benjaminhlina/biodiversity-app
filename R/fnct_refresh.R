@@ -4,8 +4,6 @@
 #' @param session the module's `session` object
 #' @param con a DBI/duckdb connection
 #' @param updating a `reactiveVal()` used as a lock to prevent circular updates
-#' @param changed character; the id of the input that triggered this refresh
-#'   ( `"home_species_filter_gs"`, or `"home_species_filter_vn"`)
 #'
 #' @export
 refresh_species_by_country <- function(input, session, con, updating) {
@@ -18,31 +16,27 @@ refresh_species_by_country <- function(input, session, con, updating) {
 
   country_sel <- input$country_filter
 
-  # 1. Base database query
-  base <- dplyr::tbl(con, "tbl_occ")
+  # ----- get occupancy table ----
+  tbl_occ <- dplyr::tbl(con, "tbl_occ")
 
   if (!("All" %in% country_sel) && length(country_sel) > 0) {
-    base <- base |> dplyr::filter(country %in% country_sel)
+    tbl_occ <- tbl_occ |>
+      dplyr::filter(country %in% country_sel)
   }
 
-  # 2. Extract choices explicitly using collect()
-  opts_sci <- base |>
-    dplyr::select(scientific_name) |>
-    dplyr::distinct() |>
-    dplyr::filter(!is.na(scientific_name)) |>
-    dplyr::collect() |>
-    dplyr::pull(scientific_name) |>
-    sort()
+  # ---- Extract choices using get_dropdown options -----
+  opts_sci <- get_dropdown_options(
+    tbl_name = tbl_occ,
+    selcted_countries = country_sel,
+    value_col = "scientific_name"
+  )
+  opts_vn <- get_dropdown_options(
+    tbl_name = tbl_occ,
+    selcted_countries = country_sel,
+    value_col = "vernacular_name"
+  )
 
-  opts_vn <- base |>
-    dplyr::select(vernacular_name) |>
-    dplyr::distinct() |>
-    dplyr::filter(!is.na(vernacular_name)) |>
-    dplyr::collect() |>
-    dplyr::pull(vernacular_name) |>
-    sort()
-
-  # 3. Update choices with server = FALSE to prevent download$filter crash
+  # ---- Update choices with ------
   shiny::updateSelectizeInput(
     session,
     "home_species_filter_gs",
