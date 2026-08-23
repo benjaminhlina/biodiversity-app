@@ -12,17 +12,26 @@
 #' @name search_functions
 #' @export
 
-search_species <- function(session, input, con) {
+search_species <- function(session, input, con, selected_country = NULL) {
+  target_country <- selected_country %||% input$country_filter
   # grab species table
-  db_species <- dplyr::tbl(con, "species_table")
+  db_species <- dplyr::tbl(
+    con,
+    "tbl_spp"
+  )
 
-  if (!is.null(input$country_filter) && !"All" %in% input$country_filter) {
+  if (
+    !is.null(target_country) &&
+      !"All" %in% target_country &&
+      !"" %in% target_country
+  ) {
     db_species <- db_species |>
-      dplyr::filter(country %in% !!input$country_filter)
+      dplyr::filter(country %in% !!target_country)
   }
 
   species_df <- db_species |>
     dplyr::distinct(scientific_name, display_label) |>
+    dplyr::arrange(display_label) |>
     dplyr::collect()
 
   species_choices <- stats::setNames(
@@ -31,7 +40,7 @@ search_species <- function(session, input, con) {
   )
 
   cli::cli_alert_info(
-    "Updating species choices: {length(species_choices)} found."
+    "Updating species choices for {.val {target_country}}: {length(species_choices)} found."
   )
 
   shiny::updateSelectizeInput(

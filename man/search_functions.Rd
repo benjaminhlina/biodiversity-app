@@ -5,7 +5,7 @@
 \alias{search_species}
 \title{Search functions}
 \usage{
-search_species(session, input, con)
+search_species(session, input, con, selected_country = NULL)
 }
 \arguments{
 \item{session}{shiny session}
