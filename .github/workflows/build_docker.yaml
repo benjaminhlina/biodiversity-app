@@ -23,11 +23,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
-      - name: Download Package Tarball
-        uses: actions/download-artifact@v4
+      - name: Download Tarball from Check Workflow
+        uses: dawidd6/action-download-artifact@v9
         with:
-          name: r-package-tarball
-          path: .
+          workflow: R_CMD_check.yaml 
+          name: gbif_app            
+          run_id: ${{ github.event.workflow_run.id }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
