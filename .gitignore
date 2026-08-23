@@ -10,3 +10,4 @@ data-raw
 data-raw/data_explore_aug.R
 data-raw/move_to_duck_db.R
 db/gbif.duckdb
+data-raw/data_explore_aug.R

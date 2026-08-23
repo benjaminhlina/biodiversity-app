@@ -3,9 +3,15 @@
 \name{get_functions}
 \alias{get_functions}
 \alias{get_dropdown_options}
+\alias{get_occ_data}
+\alias{get_media_data}
 \title{Get functions}
 \usage{
 get_dropdown_options(tbl_name, selcted_countries, value_col)
+
+get_occ_data(con)
+
+get_media_data(con)
 }
 \arguments{
 \item{tbl_name}{a given name for the a table of interest in the database.}
@@ -13,6 +19,8 @@ get_dropdown_options(tbl_name, selcted_countries, value_col)
 \item{selcted_countries}{a given name for the countries selected.}
 
 \item{value_col}{a given name for the column of interest e.g., \code{scientific_name}.}
+
+\item{con}{a database connection}
 }
 \description{
 These functions are very important as they create SQL to
@@ -24,4 +32,8 @@ given table in the database.
 \details{
 \code{get_dropdown_options()} gets the options and values for the dropdowns. It
 functions based on which countries are selected.
+
+\code{get_occ_data()} selects and returns a query for the map data
+
+\code{get_media_data()} selects and returns a query for the map data
 }

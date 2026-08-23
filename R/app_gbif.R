@@ -61,6 +61,13 @@ gbif_app <- function() {
       id = "home_sidebar",
       main_input = input
     )
+
+    home_info <- home_server(
+      "home",
+      con,
+      main_input = input,
+      home_sidebar_vals = home_sidebar_vals
+    )
   }
 
   # render ui and serve together to create dashboard
