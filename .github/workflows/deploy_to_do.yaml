@@ -29,7 +29,6 @@ jobs:
       - name: Debug files
         run: ls -lah
 
-        
       - name: Deploy with Docker Compose     
         env:
          SERVER_HOST: ${{ secrets.SERVER_HOST }}
@@ -37,12 +36,11 @@ jobs:
          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         run: |      
           # Copy gbif-nginx.conf to the server
-          scp -i ~/.ssh/deploy_key ./gbif-nginx.conf ${SERVER_USER}@${SERVER_HOST}:/opt/gbif/gbif-nginx.conf
+          scp -i ~/.ssh/deploy_key ./gbif-nginx.conf ${SERVER_USER}@${SERVER_HOST}:/opt/glatar/gbif-nginx.conf
           
           # copy docker-compose.yaml 
-          scp -i ~/.ssh/deploy_key ./docker-compose.yaml ${SERVER_USER}@${SERVER_HOST}:/opt/gbif/docker-compose.yaml
-          # copy .env 
-          scp -i ~/.ssh/deploy_key .env ${SERVER_USER}@${SERVER_HOST}:/opt/gbif/.env
+          # scp -i ~/.ssh/deploy_key ./docker-compose.yaml ${SERVER_USER}@${SERVER_HOST}:/opt/glatar/docker-compose.yaml
+        
           
           # login into the server 
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_HOST} << EOF
@@ -50,10 +48,7 @@ jobs:
           set -e
           # go into the folder 
         
-          cd /opt/gibf
-
-          # Optional: secure permissions
-          chmod 600 .env
+          cd /opt/gltar
           
           # Login to GHCR
           
