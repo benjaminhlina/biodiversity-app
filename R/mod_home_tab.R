@@ -48,30 +48,6 @@ home_server <- function(id, con, main_input, home_sidebar_vals) {
     map_dat <- shiny::reactive({
       shiny::req(home_sidebar_vals())
       data <- get_map_data(con = con, input = home_sidebar_vals()) |>
-        dplyr::mutate(
-          popup_info = paste0(
-            "<b>Continent:</b> ",
-            continent,
-            "<br>",
-            "<b>Country:</b> ",
-            country,
-            "<br>",
-            "<b>Scientific Name:</b> ",
-            display_label,
-            "<br>",
-            "<b>Life stag:</b> ",
-            life_stage,
-            "<br>",
-            "<b>Sex:</b> ",
-            sex,
-            "<br>",
-            "<b>Collector Name:</b> ",
-            creator,
-            "<br>",
-            "<b>n:</b> ",
-            individual_count
-          )
-        ) |>
         dplyr::collect()
     })
 
