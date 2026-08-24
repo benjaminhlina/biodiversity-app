@@ -1,7 +1,6 @@
 
 <!-- badges: start -->
 [![R CMD check](https://github.com/benjaminhlina/biodiversity-app/actions/workflows/R_CMD_check.yaml/badge.svg)](https://github.com/benjaminhlina/biodiversity-app/actions/workflows/R_CMD_check.yaml)
-[![Build Docker Image](https://github.com/benjaminhlina/biodiversity-app/actions/workflows/build_docker.yaml/badge.svg)](https://github.com/benjaminhlina/biodiversity-app/actions/workflows/build_docker.yaml)
 [![Deploy to DO]()]
 [![Deployed App Status]()]
 

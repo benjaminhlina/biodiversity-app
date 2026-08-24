@@ -1,18 +1,17 @@
 # Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+name: R CMD Check and Build Docker Image
 on:
   push:
     branches: [main, master]
   pull_request:
-
-name: R CMD check
+  workflow_dispatch:
 
 permissions: read-all
 
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
-
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
 
     strategy:
@@ -36,7 +35,7 @@ jobs:
         with:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
-   
+
       - name: Configure Fast Linux Binaries
         if: runner.os == 'Linux'
         run: |
@@ -51,7 +50,7 @@ jobs:
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
-          
+
       - name: Build Package Tarball
         if: runner.os == 'Linux'
         run: Rscript -e "pkgbuild::build(dest_path = '.')"
@@ -63,3 +62,56 @@ jobs:
           name: gbif_app
           path: '*.tar.gz'
           retention-days: 1
+
+  build-and-push:
+    needs: R-CMD-check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download Tarball from Check Job
+        uses: actions/download-artifact@v4
+        with:
+          name: gbif_app
+          path: .
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            CACHEBUST=${{ github.run_id }}
