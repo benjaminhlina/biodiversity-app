@@ -29,8 +29,9 @@ gbif_app <- function() {
       shinydashboard::sidebarMenu(
         id = "tabs",
         shinydashboard::menuItem(
-          text = "",
-          tabName = "home"
+          text = "Map",
+          tabName = "home",
+          icon = shiny::icon("map")
         )
       ),
       shinyjs::useShinyjs(),
