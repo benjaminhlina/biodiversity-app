@@ -37,7 +37,7 @@ get_map_data <- function(con, input) {
         "individual_count",
         # "life_stage",
         # "sex",
-        # "country",
+        "country",
         # "continent",
         "longitude_decimal",
         "latitude_decimal",

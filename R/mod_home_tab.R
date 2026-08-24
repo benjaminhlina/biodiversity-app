@@ -30,7 +30,8 @@ home_tab_ui <- function(id) {
       leaflet::leafletOutput(ns("map"), height = "700px", width = "100%"),
       type = 4,
       caption = "Please wait for the map to load..."
-    )
+    ),
+    shiny::uiOutput(ns("date_range_ui"))
   )
 }
 
@@ -47,6 +48,7 @@ home_tab_ui <- function(id) {
 
 home_server <- function(id, con, main_input, home_sidebar_vals) {
   shiny::moduleServer(id, function(input, output, session) {
+    ns <- session$ns
     shiny::observe({
       shinyjs::toggle(
         id = "home_ui",
@@ -54,7 +56,8 @@ home_server <- function(id, con, main_input, home_sidebar_vals) {
       )
     })
 
-    map_dat <- shiny::reactive({
+    # ----- create base data ------
+    base_map_dat <- shiny::reactive({
       shiny::req(home_sidebar_vals())
       data <- get_map_data(con = con, input = home_sidebar_vals())
 
@@ -64,18 +67,57 @@ home_server <- function(id, con, main_input, home_sidebar_vals) {
       }
     })
 
+    # ----- create date range for slider ------
+    output$date_range_ui <- shiny::renderUI({
+      shiny::req(base_map_dat())
+      df <- base_map_dat()
+      shiny::req(!is.null(df), nrow(df) > 0)
+      shiny::req(!all(is.na(df$date_time)))
+
+      dt_min <- min(df$date_time, na.rm = TRUE)
+      dt_max <- max(df$date_time, na.rm = TRUE)
+
+      shiny::sliderInput(
+        inputId = ns("date_range"),
+        label = "Filter by the date and time observered",
+        min = dt_min,
+        max = dt_max,
+        value = c(dt_min, dt_max),
+        timeFormat = "%Y-%m-%d %H:%M",
+        width = "100%"
+      )
+    })
+    # ----- filter data based on slider inputs -----
+
+    final_map_dat <- shiny::reactive({
+      shiny::req(base_map_dat())
+      df <- base_map_dat()
+      shiny::req(!is.null(df))
+
+      if (!is.null(input$date_range)) {
+        df <- df |>
+          dplyr::filter(
+            date_time >= input$date_range[1],
+            date_time <= input$date_range[2]
+          )
+      }
+      df
+    })
+
+    # ---- I like having this in the log files -----
     shiny::observe({
       cli::cli_inform(
         "Checking sidebar vals: {.val {is.null(home_sidebar_vals())}}"
       )
 
       cli::cli_inform(
-        "map_dat returned row count: {.val {nrow(map_dat())}}"
+        "map_dat returned row count: {.val {nrow(final_map_dat())}}"
       )
     })
-
+    # ----- output create map ------
+    # -----
     output$map <- leaflet::renderLeaflet({
-      df <- map_dat()
+      df <- final_map_dat()
       # shiny::req(nrow(df) > 0)
 
       pal <- leaflet::colorNumeric(
