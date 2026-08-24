@@ -1,0 +1,78 @@
+name: Deploy Docker Compose to DO
+
+on:
+  workflow_run:
+    workflows: ["Build Docker Image"]
+    types:
+      - completed
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+      - name: Debug files
+        run: ls -lah
+
+        
+      - name: Deploy with Docker Compose     
+        env:
+         SERVER_HOST: ${{ secrets.SERVER_HOST }}
+         SERVER_USER: ${{ secrets.SERVER_USER }}
+         GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        run: |      
+          # Copy nginx.conf to the server
+          scp -i ~/.ssh/deploy_key ./nginx.conf ${SERVER_USER}@${SERVER_HOST}:/opt/glatar/nginx.conf
+          
+          # copy docker-compose.yaml 
+          scp -i ~/.ssh/deploy_key ./docker-compose.yaml ${SERVER_USER}@${SERVER_HOST}:/opt/glatar/docker-compose.yaml
+          # copy .env 
+          scp -i ~/.ssh/deploy_key .env ${SERVER_USER}@${SERVER_HOST}:/opt/glatar/.env
+          
+          # login into the server 
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_HOST} << EOF
+
+          set -e
+          # go into the folder 
+        
+          cd /opt/glatar
+
+          # Optional: secure permissions
+          chmod 600 .env
+          
+          # Login to GHCR
+          
+          echo "${GHCR_TOKEN}" | docker login ghcr.io -u benjaminhlina --password-stdin
+
+          # docker compose everything together 
+          docker compose pull
+
+          # add down 
+          docker compose down
+          
+          docker compose up -d --scale shiny=3 --remove-orphans
+
+          docker image prune -f
+
+          docker compose ps
+
+          EOF
+
+      - name: Cleanup SSH Key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
