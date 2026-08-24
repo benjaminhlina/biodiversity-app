@@ -13,7 +13,6 @@ Imports:
     dplyr,
     duckdb,
     here,
-    htmltools,
     leaflet,
     lobstr,
     purrr,
