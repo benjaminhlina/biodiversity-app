@@ -6,6 +6,7 @@
 #' @param session shiny session
 #' @param input shiny input
 #' @param con a databaese connection
+#' @param selected_country a `vector` containing the selected country.
 #'
 #' @return returns a filtered data object that can then be displayed.
 #'

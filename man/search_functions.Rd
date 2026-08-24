@@ -13,6 +13,8 @@ search_species(session, input, con, selected_country = NULL)
 \item{input}{shiny input}
 
 \item{con}{a databaese connection}
+
+\item{selected_country}{a \code{vector} containing the selected country.}
 }
 \value{
 returns a filtered data object that can then be displayed.
