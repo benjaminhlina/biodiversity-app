@@ -19,51 +19,35 @@
 #' @export
 
 get_map_data <- function(con, input) {
-  cf <- input$country_filter
-  spf <- input$species_filter
-
-  # ---- get occ data ----
-  tbl_occ <- get_tbl(
-    con,
-    "tbl_occ",
-    select = c(
-      "id",
-      "scientific_name",
-      "vernacular_name",
-      "individual_count",
-      "life_stage",
-      "sex",
-      "country",
-      "continent",
-      "longitude_decimal",
-      "latitude_decimal",
-      "event_date",
-      "year",
-      "month_abb",
-      "habitat",
-      "popup_info"
-    )
-  )
-
-  # get spp data -----
-  # tbl_spp <- get_tbl(con, "tbl_spp")
-
-  filters <- c(
-    "cf",
-    "spf"
-  )
-
-  all_country_selected <- any(c("", "All") %in% input$country_filter) ||
+  all_country_selected <- any(c("") %in% input$country_filter) ||
     is.null(input$country_filter)
 
   all_spp_selected <- any(c("", "All") %in% input$species_filter) ||
     is.null(input$species_filter)
 
-  # combine species and
-  # occ_data <- tbl_occ |>
-  #   dplyr::left_join(tbl_spp)
-
   if (!all_country_selected) {
+    # ---- get occ data ----
+    tbl_occ <- get_tbl(
+      con,
+      "tbl_occ",
+      select = c(
+        "id",
+        "scientific_name",
+        "vernacular_name",
+        "individual_count",
+        "life_stage",
+        "sex",
+        "country",
+        "continent",
+        "longitude_decimal",
+        "latitude_decimal",
+        "event_date",
+        "year",
+        "month_abb",
+        "habitat",
+        "popup_info"
+      )
+    )
     tbl_occ <- tbl_occ |>
       dplyr::filter(country %in% !!input$country_filter)
 
@@ -72,26 +56,14 @@ get_map_data <- function(con, input) {
       tbl_occ <- tbl_occ |>
         dplyr::filter(scientific_name %in% !!input$species_filter)
     }
+    return(tbl_occ)
+  } else {
+    return(NULL)
   }
 
   cli::cli_alert_info(
     "Queried data for {.val {input$country_filter}} country(s) for the following species {.val {input$species_filter}}"
   )
-
-  # tbl_mm <- get_tbl(
-  #   con,
-  #   'tbl_multimedia',
-  #   select = c(
-  #     "id",
-  #     "identifier",
-  #     "creator"
-  #   )
-  # )
-
-  # filtered_final_dat <- occ_data |>
-  #   dplyr::left_join(tbl_mm)
-
-  return(tbl_occ)
 }
 
 

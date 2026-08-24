@@ -23,7 +23,6 @@ search_species <- function(session, input, con, selected_country = NULL) {
 
   if (
     !is.null(target_country) &&
-      !"All" %in% target_country &&
       !"" %in% target_country
   ) {
     db_species <- db_species |>

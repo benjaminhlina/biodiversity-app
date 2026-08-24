@@ -56,8 +56,12 @@ home_server <- function(id, con, main_input, home_sidebar_vals) {
 
     map_dat <- shiny::reactive({
       shiny::req(home_sidebar_vals())
-      data <- get_map_data(con = con, input = home_sidebar_vals()) |>
-        dplyr::collect()
+      data <- get_map_data(con = con, input = home_sidebar_vals())
+
+      if (!is.null(data)) {
+        data <- data |>
+          dplyr::collect()
+      }
     })
 
     shiny::observe({
@@ -72,33 +76,36 @@ home_server <- function(id, con, main_input, home_sidebar_vals) {
 
     output$map <- leaflet::renderLeaflet({
       df <- map_dat()
-      shiny::req(nrow(df) > 0)
+      # shiny::req(nrow(df) > 0)
 
       pal <- leaflet::colorNumeric(
         palette = "viridis",
         domain = df$individual_count
       )
 
-      leaflet::leaflet(df) |>
-        leaflet::addTiles() |>
-        leaflet::addCircleMarkers(
-          lng = ~longitude_decimal,
-          lat = ~latitude_decimal,
-          popup = ~popup_info,
-          radius = ~ scales::rescale(sqrt(individual_count), to = c(4, 20)),
-          fillColor = ~ pal(individual_count),
-          fillOpacity = 0.8,
-          stroke = TRUE,
-          weight = 1,
-          color = "black"
-        ) |>
-        leaflet::addLegend(
-          position = "bottomright",
-          pal = pal,
-          values = ~individual_count,
-          title = "Individuals Observed",
-          opacity = 0.8
-        )
+      map <- base_map(df)
+      if (!is.null(df) && nrow(df) > 0) {
+        map <- map |>
+          leaflet::addCircleMarkers(
+            lng = ~longitude_decimal,
+            lat = ~latitude_decimal,
+            popup = ~popup_info,
+            radius = ~ scales::rescale(sqrt(individual_count), to = c(4, 20)),
+            fillColor = ~ pal(individual_count),
+            fillOpacity = 0.8,
+            stroke = TRUE,
+            weight = 1,
+            color = "black"
+          ) |>
+          leaflet::addLegend(
+            position = "bottomright",
+            pal = pal,
+            values = ~individual_count,
+            title = "Individuals Observed",
+            opacity = 0.8
+          )
+      }
+      map
     })
   })
 }

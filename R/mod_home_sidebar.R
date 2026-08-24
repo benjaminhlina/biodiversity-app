@@ -69,12 +69,6 @@ home_sidebar_server <- function(id, con, main_input) {
         shiny::req(main_input$tabs == "home")
         shiny::req(!initialized())
 
-        filters <- c(
-          "country_filter"
-        )
-
-        purrr::walk(filters, ~ exclusive_all_observer(input, session, .x))
-
         initial_country <- "Poland"
         # Correct syntax
         shiny::freezeReactiveValue(input, "species_search")
@@ -82,7 +76,7 @@ home_sidebar_server <- function(id, con, main_input) {
         shiny::updateSelectizeInput(
           session,
           "country_filter",
-          choices = c("All", countries$title),
+          choices = c(countries$title),
           selected = initial_country,
           options = list(
             maxOptions = 50,
