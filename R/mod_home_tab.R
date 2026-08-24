@@ -18,8 +18,7 @@ home_tab_ui <- function(id) {
       "Welcome "
     ),
     shinycssloaders::withSpinner(
-      mapgl::maplibreOutput(ns("map"), height = "700px", width = "100%"),
-      # leaflet::leafletOutput(ns("map"), height = "700px", width = "100%"),
+      leaflet::leafletOutput(ns("map"), height = "700px", width = "100%"),
       type = 4,
       caption = "Please wait for the map to load..."
     )
@@ -73,12 +72,7 @@ home_server <- function(id, con, main_input, home_sidebar_vals) {
             individual_count
           )
         ) |>
-        dplyr::collect() |>
-        sf::st_as_sf(
-          coords = c("longitude_decimal", "latitude_decimal"),
-          crs = 4326,
-          remove = FALSE
-        )
+        dplyr::collect()
     })
 
     shiny::observe({
@@ -91,71 +85,35 @@ home_server <- function(id, con, main_input, home_sidebar_vals) {
       )
     })
 
-    output$map <- mapgl::renderMaplibre({
+    output$map <- leaflet::renderLeaflet({
       df <- map_dat()
       shiny::req(nrow(df) > 0)
 
-      n_colors <- 5
+      pal <- leaflet::colorNumeric(
+        palette = "viridis",
+        domain = df$individual_count
+      )
 
-      count_range <- range(df$individual_count, na.rm = TRUE)
-      color_stops <- seq(count_range[1], count_range[2], length.out = n_colors)
-      color_values <- viridisLite::viridis(n_colors)
-
-      mapgl::maplibre(style = mapgl::carto_style("positron")) |>
-        mapgl::fit_bounds(df, animate = FALSE) |>
-        mapgl::add_circle_layer(
-          id = "obs",
-          source = df,
-          circle_radius = mapgl::interpolate(
-            column = "individual_count",
-            values = count_range,
-            stops = c(4, 20)
-          ),
-          circle_color = mapgl::interpolate(
-            column = "individual_count",
-            values = color_stops,
-            stops = color_values
-          ),
-          circle_opacity = 0.8,
-          popup = "popup_info"
+      leaflet::leaflet(df) |>
+        leaflet::addTiles() |>
+        leaflet::addCircleMarkers(
+          lng = ~longitude_decimal,
+          lat = ~latitude_decimal,
+          popup = ~popup_info,
+          radius = ~ scales::rescale(sqrt(individual_count), to = c(4, 20)),
+          fillColor = ~ pal(individual_count),
+          fillOpacity = 0.8,
+          stroke = TRUE,
+          weight = 1,
+          color = "black"
         ) |>
-        mapgl::add_legend(
-          legend_title = "Individuals Observed",
-          values = color_stops,
-          colors = color_values,
-          type = "continuous",
-          position = "bottom-right"
+        leaflet::addLegend(
+          position = "bottomright",
+          pal = pal,
+          values = ~individual_count,
+          title = "Individuals Observed",
+          opacity = 0.8
         )
-
-      # output$map <- leaflet::renderLeaflet({
-      #   df <- map_dat()
-      #   shiny::req(nrow(df) > 0)
-
-      #   pal <- leaflet::colorNumeric(
-      #     palette = "viridis",
-      #     domain = df$individual_count
-      #   )
-
-      #   leaflet::leaflet(df) |>
-      #     leaflet::addTiles() |>
-      #     leaflet::addCircleMarkers(
-      #       lng = ~longitude_decimal,
-      #       lat = ~latitude_decimal,
-      #       popup = ~popup_info,
-      #       radius = ~ scales::rescale(sqrt(individual_count), to = c(4, 20)),
-      #       fillColor = ~ pal(individual_count),
-      #       fillOpacity = 0.8,
-      #       stroke = TRUE,
-      #       weight = 1,
-      #       color = "black"
-      #     ) |>
-      #     leaflet::addLegend(
-      #       position = "bottomright",
-      #       pal = pal,
-      #       values = ~individual_count,
-      #       title = "Individuals Observed",
-      #       opacity = 0.8
-      #     )
     })
   })
 }
