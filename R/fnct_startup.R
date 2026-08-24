@@ -1,4 +1,4 @@
-#' Start up GLATAR App
+#' Start up GBIF App
 #'
 #' This function, which has no arguments, starts the database
 #' connection, dispalys the ap verions.

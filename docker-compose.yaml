@@ -6,7 +6,7 @@ services:
       - ./gbif-nginx.conf:/etc/nginx/nginx.conf:ro
     networks:
       - gbif-net
-      - edge-net     # so GLATAR's nginx can reach it
+      - edge-net   
     depends_on:
       - gbif-app
 

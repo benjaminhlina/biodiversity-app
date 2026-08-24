@@ -2,7 +2,7 @@ name: Deploy Docker Compose to DO
 
 on:
   workflow_run:
-    workflows: ["Build Docker Image"]
+    workflows: ["R CMD Check and Build Docker Image"]
     types:
       - completed
   workflow_dispatch:
@@ -36,13 +36,13 @@ jobs:
          SERVER_USER: ${{ secrets.SERVER_USER }}
          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         run: |      
-          # Copy nginx.conf to the server
-          scp -i ~/.ssh/deploy_key ./nginx.conf ${SERVER_USER}@${SERVER_HOST}:/opt/glatar/nginx.conf
+          # Copy gbif-nginx.conf to the server
+          scp -i ~/.ssh/deploy_key ./gbif-nginx.conf ${SERVER_USER}@${SERVER_HOST}:/opt/gbif/gbif-nginx.conf
           
           # copy docker-compose.yaml 
-          scp -i ~/.ssh/deploy_key ./docker-compose.yaml ${SERVER_USER}@${SERVER_HOST}:/opt/glatar/docker-compose.yaml
+          scp -i ~/.ssh/deploy_key ./docker-compose.yaml ${SERVER_USER}@${SERVER_HOST}:/opt/gbif/docker-compose.yaml
           # copy .env 
-          scp -i ~/.ssh/deploy_key .env ${SERVER_USER}@${SERVER_HOST}:/opt/glatar/.env
+          scp -i ~/.ssh/deploy_key .env ${SERVER_USER}@${SERVER_HOST}:/opt/gbif/.env
           
           # login into the server 
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_HOST} << EOF
@@ -50,7 +50,7 @@ jobs:
           set -e
           # go into the folder 
         
-          cd /opt/glatar
+          cd /opt/gibf
 
           # Optional: secure permissions
           chmod 600 .env

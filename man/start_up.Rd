@@ -2,7 +2,7 @@
 % Please edit documentation in R/fnct_startup.R
 \name{start_up}
 \alias{start_up}
-\title{Start up GLATAR App}
+\title{Start up GBIF App}
 \usage{
 start_up()
 }
