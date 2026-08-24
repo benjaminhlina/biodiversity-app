@@ -79,7 +79,6 @@ home_sidebar_server <- function(id, con, main_input) {
           choices = c(countries$title),
           selected = initial_country,
           options = list(
-            maxOptions = 50,
             placeholder = "Type to select countries....",
             openOnFocus = FALSE
           )

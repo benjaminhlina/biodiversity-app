@@ -35,16 +35,14 @@ get_map_data <- function(con, input) {
         "scientific_name",
         "vernacular_name",
         "individual_count",
-        "life_stage",
-        "sex",
-        "country",
-        "continent",
+        # "life_stage",
+        # "sex",
+        # "country",
+        # "continent",
         "longitude_decimal",
         "latitude_decimal",
-        "event_date",
-        "year",
-        "month_abb",
-        "habitat",
+        "date_time",
+        # "habitat",
         "popup_info"
       )
     )
