@@ -16,6 +16,7 @@ Imports:
     leaflet,
     lobstr,
     purrr,
+    scales,
     shiny,
     shinycssloaders,
     shinydashboard,
