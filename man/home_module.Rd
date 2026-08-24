@@ -3,16 +3,27 @@
 \name{home_module}
 \alias{home_module}
 \alias{home_tab_ui}
+\alias{home_server}
 \title{Home Tab}
 \usage{
 home_tab_ui(id)
+
+home_server(id, con, main_input, home_sidebar_vals)
 }
 \arguments{
 \item{id}{the shiny namespace id name (i.e., \code{"home"}).}
+
+\item{con}{database connnection}
+
+\item{main_input}{input from shiny}
+
+\item{home_sidebar_vals}{object exported out by sidebar}
 }
 \description{
 Provides the the home tab for the app.
 }
 \details{
 \code{home_tab_ui()} a shiny UI.
+
+\code{home_server()} a shiny server.
 }
