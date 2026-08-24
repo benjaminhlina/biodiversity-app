@@ -15,7 +15,16 @@ home_tab_ui <- function(id) {
   shinydashboard::tabItem(
     tabName = "home",
     shiny::h2(
-      "Welcome "
+      "Welcome to the Global Biodiversity Information Facility (GBIF) Biodiversity Explorer"
+    ),
+    shiny::p(
+      "Below is an interactive map displaying biodiversity observation data. ",
+      "Each point represents a location where species have been recorded with",
+      "larger points indicate more observations, and brighter colours indicate ",
+      "a higher number of observations. Click on any point to view more ",
+      "information, including a link to a photo of the species. Use the ",
+      "dropdown filters on the left to narrow results by species and to ",
+      "display one or more countries."
     ),
     shinycssloaders::withSpinner(
       leaflet::leafletOutput(ns("map"), height = "700px", width = "100%"),
