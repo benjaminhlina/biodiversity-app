@@ -67,8 +67,8 @@ RUN R -e "options(renv.verbose = TRUE); renv::restore(prompt = FALSE)"
 # Copy app files
 COPY app.R app.R
 
-RUN mkdir -p ./db && \
-    curl -L -o ./db/gbif.duckdb "https://www.dropbox.com/scl/fi/58jpur6fan54c8kdmfsb8/gbif.duckdb?rlkey=c0m0afsai0bojd4zw3jicaoxv&st=swbupnox&dl=0"
+# RUN mkdir -p ./db && \
+#     curl -L -o ./db/gbif.duckdb "https://www.dropbox.com/scl/fi/58jpur6fan54c8kdmfsb8/gbif.duckdb?rlkey=c0m0afsai0bojd4zw3jicaoxv&st=swbupnox&dl=0"
 # copy shiny-server config file
 COPY shiny-server.conf /etc/shiny-server/shiny-server.conf
 
