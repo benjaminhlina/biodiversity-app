@@ -43,7 +43,7 @@ gbif_app <- function() {
     # ---- body ----
     shinydashboard::dashboardBody(
       shinydashboard::tabItems(
-        shinydashboard::tabItem(tabName = "home", home_tab_ui("home_ui"))
+        shinydashboard::tabItem(tabName = "home", home_tab_ui("home"))
       )
     )
   )

@@ -40,12 +40,13 @@ get_map_data <- function(con, input) {
       "event_date",
       "year",
       "month_abb",
-      "habitat"
+      "habitat",
+      "popup_info"
     )
   )
 
   # get spp data -----
-  tbl_spp <- get_tbl(con, "tbl_spp")
+  # tbl_spp <- get_tbl(con, "tbl_spp")
 
   filters <- c(
     "cf",
@@ -59,16 +60,16 @@ get_map_data <- function(con, input) {
     is.null(input$species_filter)
 
   # combine species and
-  occ_data <- tbl_occ |>
-    dplyr::left_join(tbl_spp)
+  # occ_data <- tbl_occ |>
+  #   dplyr::left_join(tbl_spp)
 
   if (!all_country_selected) {
-    occ_data <- occ_data |>
+    tbl_occ <- tbl_occ |>
       dplyr::filter(country %in% !!input$country_filter)
 
     # Species filter applied ONLY when country is filtered
     if (!all_spp_selected) {
-      occ_data <- occ_data |>
+      tbl_occ <- tbl_occ |>
         dplyr::filter(scientific_name %in% !!input$species_filter)
     }
   }
@@ -77,20 +78,20 @@ get_map_data <- function(con, input) {
     "Queried data for {.val {input$country_filter}} country(s) for the following species {.val {input$species_filter}}"
   )
 
-  tbl_mm <- get_tbl(
-    con,
-    'tbl_multimedia',
-    select = c(
-      "id",
-      "identifier",
-      "creator"
-    )
-  )
+  # tbl_mm <- get_tbl(
+  #   con,
+  #   'tbl_multimedia',
+  #   select = c(
+  #     "id",
+  #     "identifier",
+  #     "creator"
+  #   )
+  # )
 
-  filtered_final_dat <- occ_data |>
-    dplyr::left_join(tbl_mm)
+  # filtered_final_dat <- occ_data |>
+  #   dplyr::left_join(tbl_mm)
 
-  return(filtered_final_dat)
+  return(tbl_occ)
 }
 
 
