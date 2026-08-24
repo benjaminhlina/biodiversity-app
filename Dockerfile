@@ -85,9 +85,10 @@ RUN chmod 755 /usr/local/bin/shiny_entry.sh
 # Copy the .tar.gz bundle created by the check step
 COPY *.tar.gz /tmp/package.tar.gz
 
-# Install package dependencies directly from the bundle, then install the package
-RUN R -e "pak::pkg_install('deps::/tmp/package.tar.gz'); pak::pkg_install('/tmp/package.tar.gz'); pak::cache_clean()" \
-    && rm /tmp/package.tar.gz
+RUN mkdir -p /tmp/pkgsrc \
+    && tar -xzf /tmp/package.tar.gz -C /tmp/pkgsrc \
+    && R -e "pak::pkg_install('deps::/tmp/pkgsrc/gbifapp'); pak::pkg_install('local::/tmp/pkgsrc/gbifapp'); pak::cache_clean()" \
+    && rm -rf /tmp/package.tar.gz /tmp/pkgsrc
 # ---- Expose port and run shiny_entry ----- 
 
 EXPOSE 3838
