@@ -22,7 +22,8 @@ start_db_con <- function(db_name = NULL) {
     dbdir = here::here(
       'db',
       db_name
-    )
+    ),
+    read_only = TRUE
   )
 
   cli::cli_alert_success(
