@@ -1,0 +1,100 @@
+name: Check App Status
+
+on:
+  workflow_run:
+    workflows: ["Deploy Docker Compose to DO"]
+    types:
+      - completed
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  check-shiny-status:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Check Shiny app logs and HTTP status
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+          set -e
+
+          echo "Waiting for Shiny to initialize..."
+          sleep 15
+
+          echo "Checking container is running..."
+          docker ps | grep gbif-gbif-app*
+
+          echo "Checking HTTP status code..."
+            STATUS_CODE=$(curl -s -k -o /dev/null -w "%{http_code}\n" https://localhost/)
+
+          echo "HTTP status code: $STATUS_CODE"
+
+          if [ "$STATUS_CODE" -ne 200 ]; then
+            echo "Shiny app returned non-200 status"
+            exit 1
+          fi
+          
+          echo "Resolving shiny container..."
+          
+          SHINY_CONTAINER=$(docker ps --filter "name=gbif-gbif-app" --format "{{.Names}}" | head -n 1)
+
+          if [ -z "$SHINY_CONTAINER" ]; then
+            echo "No shiny container found"
+            docker ps
+            exit 1
+          fi
+
+          echo "Using container: $SHINY_CONTAINER"
+
+          # echo "Waiting for Shiny to initialize..."
+          sleep 15
+          echo "Triggering app to generate logs..."
+          
+          docker exec "$SHINY_CONTAINER" sh -c "wget -qO- http://localhost:3838/gbif-app/ > /dev/null || true"
+
+          echo "Waiting for Shiny log file....."
+          for i in {1..20}; do
+            LOG_PATH=$(docker exec "$SHINY_CONTAINER" sh -c "ls -t /var/log/shiny-server/*gbif-gbif*.log 2>/dev/null | head -n 1")
+            if [ -n "$LOG_PATH" ]; then
+              break
+            fi
+            sleep 2
+          done
+
+          if [ -z "$LOG_PATH" ]; then
+            echo "No Shiny app log file found, dumping docker logs instead"
+            docker logs "$SHINY_CONTAINER" --tail 200
+            exit 1
+          fi
+
+          echo "Using log file: $LOG_PATH"
+          echo "--------------------"
+          docker exec "$SHINY_CONTAINER" tail -n 100 "$LOG_PATH"
+          echo "--------------------"
+
+          echo "Checking logs for fatal errors..."
+          if docker exec "$SHINY_CONTAINER" grep -E "Error|Execution halted|exited with code|segfault" "$LOG_PATH"; then
+            echo "Shiny app error detected in logs"
+            exit 1
+          fi
+
+          EOF
+
+      - name: Cleanup SSH Key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
