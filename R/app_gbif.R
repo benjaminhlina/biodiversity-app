@@ -22,7 +22,16 @@ gbif_app <- function() {
     # ----- title -----
     shinydashboard::dashboardHeader(
       title = "Global Biodiversity Information Facility - Appsilon",
-      titleWidth = 500
+      titleWidth = 500,
+      shiny::tags$li(
+        class = "dropdown",
+        shiny::tags$a(
+          href = "https://github.com/benjaminhlina/biodiversity-app",
+          target = "_blank",
+          shiny::icon("github", class = "fa-2x"),
+          style = "padding-top: 10px; padding-bottom: 10px;"
+        )
+      )
     ),
     # ---- sidebar -----
     shinydashboard::dashboardSidebar(
