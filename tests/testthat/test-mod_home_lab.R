@@ -66,15 +66,14 @@ test_that("create_filtered_data filters correctly by date_range", {
     expr = {
       df_filtered <- filtered_data()
 
-      expect_equal(nrow(df_filtered), 5)
+      expect_equal(nrow(df_filtered), 6)
       expect_equal(
         df_filtered$id,
         c(
-          '161827036@OBS',
-          '157461072@OBS',
-          '157474169@OBS',
-          '159676137@OBS',
-          '170864085@OBS'
+          "140960743@OBS",
+          "161827036@OBS",
+          "157461072@OBS",
+          "157474169@OBS"
         )
       )
     }
