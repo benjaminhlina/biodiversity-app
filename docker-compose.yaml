@@ -12,7 +12,7 @@ services:
       - gbif-app
 
   gbif-app:
-    image: ghcr.io/benjaminhlina/gbif-app:latest
+    image: ghcr.io/benjaminhlina/biodiversity-app:latest  
     restart: unless-stopped
     expose:
       - "3838"
