@@ -70,10 +70,11 @@ test_that("create_filtered_data filters correctly by date_range", {
       expect_equal(
         df_filtered$id,
         c(
-          "140960743@OBS",
           "161827036@OBS",
           "157461072@OBS",
-          "157474169@OBS"
+          "157474169@OBS",
+          "159676137@OBS",
+          "170864085@OBS"
         )
       )
     }
