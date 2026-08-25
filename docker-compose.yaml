@@ -14,7 +14,7 @@ services:
   gbif-app:
     image: ghcr.io/benjaminhlina/biodiversity-app:latest 
     volumes:
-      - /opt/gbif/:/srv/shiny-server/gbif-app/:ro 
+      - /opt/gbif/db:/srv/shiny-server/gbif-app/db:ro 
     restart: unless-stopped
     expose:
       - "3838"
