@@ -65,7 +65,7 @@ home_server <- function(id, con, main_input, home_sidebar_vals) {
       data = base_map_dat,
       output = output,
       output_id = "date_range_ui",
-      session = session
+      session =session
     )
     # output$date_range_ui <- shiny::renderUI({
     #   shiny::req(base_map_dat())
