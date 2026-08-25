@@ -8,7 +8,7 @@
 # Global Biodiversity Information Facility (gbif) - app
 
 `{gbif}` is an R package that
-creates a [{shiny}](https://shiny.posit.co/) app that interfaces with the biodiversity data. Global Biodiversity Information Facility observation data is stored in a DuckDB database with the app provides a seamless and rich interface to interact with the observation data. 
+creates a [{shiny}](https://shiny.posit.co/) app that interfaces with the biodiversity data. Global Biodiversity Information Facility observation data is stored in a DuckDB database with the app provides a seamless and rich interface to interact with the observation data. This project leverages an already existing deployment of [glatar.org](glatar.org) on a Digital Oceans droplet. The speed at which processes occur are limited to the current DO droplet's settings, which at this moment are not upgradable due to budget constraints. Because the project is deployed in Docker containers, one could redeploy this on other cloud services (e.g., AWS) to utilize better storage and processing power.  
 
  
 The app can be accessed at [gbif.glatar.org](https://gbif.glatar.org/) and provides the ability to do the following: 
