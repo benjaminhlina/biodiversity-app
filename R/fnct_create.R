@@ -29,6 +29,7 @@ create_base_data <- function(con, input_source) {
   })
 }
 
+
 # ----- create filtered data ------
 
 #' @param data a `reactive()` data frame like object usually
@@ -44,7 +45,7 @@ create_base_data <- function(con, input_source) {
 create_filtered_data <- function(data, input) {
   shiny::reactive({
     shiny::req(data())
-    df <- data
+    df <- data()
     shiny::req(!is.null(df))
 
     if (!is.null(input$date_range)) {
