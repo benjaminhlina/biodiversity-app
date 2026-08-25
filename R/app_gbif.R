@@ -7,6 +7,7 @@
 #' @import shiny
 #' @import shinydashboard
 #' @importFrom shinyjs useShinyjs
+#' @import dbplyr
 #' @export
 
 gbif_app <- function() {

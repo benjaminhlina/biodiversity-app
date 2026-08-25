@@ -11,6 +11,7 @@ Imports:
     cli,
     DBI,
     dplyr,
+    dbplyr,
     duckdb,
     here,
     leaflet,
