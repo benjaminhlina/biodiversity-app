@@ -16,12 +16,12 @@ Imports:
     here,
     leaflet,
     lobstr,
-    purrr,
     scales,
     shiny,
     shinycssloaders,
     shinydashboard,
-    shinyjs
+    shinyjs,
+    withr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 8.0.0
 Depends: 

@@ -14,3 +14,4 @@
 ^nginx\.conf$
 ^shiny_entry\.sh$
 ^shiny-server\.conf$
+^gbif-nginx\.conf$

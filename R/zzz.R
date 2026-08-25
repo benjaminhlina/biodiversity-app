@@ -4,7 +4,8 @@ utils::globalVariables(
     'con',
     'countries',
     'country',
-    "display_label",
+    'date_time',
+    'display_label',
     'scientific_name',
     'vernacular_name'
   )
