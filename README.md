@@ -2,8 +2,7 @@
 <!-- badges: start -->
 [![R CMD check](https://github.com/benjaminhlina/biodiversity-app/actions/workflows/R_CMD_check.yaml/badge.svg)](https://github.com/benjaminhlina/biodiversity-app/actions/workflows/R_CMD_check.yaml)
 [![Deploy Docker Compose to DO](https://github.com/benjaminhlina/biodiversity-app/actions/workflows/deploy_to_do.yaml/badge.svg)](https://github.com/benjaminhlina/biodiversity-app/actions/workflows/deploy_to_do.yaml)
-[![Deployed App Status]()]
-
+[![Deployed App Status](https://github.com/benjaminhlina/biodiversity-app/actions/workflows/check_shiny_status.yaml/badge.svg)](https://github.com/benjaminhlina/biodiversity-app/actions/workflows/check_shiny_status.yaml)
 <!-- badges: end -->
 
 # Global Biodiversity Information Facility (gbif) - app
