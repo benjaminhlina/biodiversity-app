@@ -59,53 +59,35 @@ home_server <- function(id, con, main_input, home_sidebar_vals) {
     # ----- create base data ------
 
     base_map_dat <- create_base_data(con, input_source = home_sidebar_vals)
-    # base_map_dat <- shiny::reactive({
-    #   shiny::req(home_sidebar_vals())
-    #   data <- get_map_data(con = con, input = home_sidebar_vals())
-
-    #   if (!is.null(data)) {
-    #     data <- data |>
-    #       dplyr::collect()
-    #   }
-    # })
 
     # ----- create date range for slider ------
-    output$date_range_ui <- shiny::renderUI({
-      shiny::req(base_map_dat())
-      df <- base_map_dat()
-      shiny::req(!is.null(df), nrow(df) > 0)
-      shiny::req(!all(is.na(df$date_time)))
-
-      dt_min <- min(df$date_time, na.rm = TRUE)
-      dt_max <- max(df$date_time, na.rm = TRUE)
-
-      shiny::sliderInput(
-        inputId = ns("date_range"),
-        label = "Filter by the date and time observered",
-        min = dt_min,
-        max = dt_max,
-        value = c(dt_min, dt_max),
-        timeFormat = "%Y-%m-%d %H:%M",
-        width = "100%"
-      )
-    })
-    # ----- filter data based on slider inputs -----
-    final_map_dat <- create_filtered_data(data = base_map_dat, input = input)
-
-    # final_map_dat <- shiny::reactive({
+    display_slider(
+      data = base_map_dat,
+      output = output,
+      output_id = "date_range_ui",
+      session = session
+    )
+    # output$date_range_ui <- shiny::renderUI({
     #   shiny::req(base_map_dat())
     #   df <- base_map_dat()
-    #   shiny::req(!is.null(df))
+    #   shiny::req(!is.null(df), nrow(df) > 0)
+    #   shiny::req(!all(is.na(df$date_time)))
 
-    #   if (!is.null(input$date_range)) {
-    #     df <- df |>
-    #       dplyr::filter(
-    #         date_time >= input$date_range[1],
-    #         date_time <= input$date_range[2]
-    #       )
-    #   }
-    #   df
+    #   dt_min <- min(df$date_time, na.rm = TRUE)
+    #   dt_max <- max(df$date_time, na.rm = TRUE)
+
+    #   shiny::sliderInput(
+    #     inputId = ns("date_range"),
+    #     label = "Filter by the date and time observered",
+    #     min = dt_min,
+    #     max = dt_max,
+    #     value = c(dt_min, dt_max),
+    #     timeFormat = "%Y-%m-%d %H:%M",
+    #     width = "100%"
+    #   )
     # })
+    # ----- filter data based on slider inputs -----
+    final_map_dat <- create_filtered_data(data = base_map_dat, input = input)
 
     # ---- I like having this in the log files -----
     shiny::observe({
