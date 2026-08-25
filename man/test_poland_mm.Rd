@@ -3,7 +3,7 @@
 \docType{data}
 \name{test_poland_mm}
 \alias{test_poland_mm}
-\title{A \code{data.frame} containing the four species from poland used for testing}
+\title{A \code{data.frame} containing the multimedia four species from poland used for testing}
 \format{
 \code{data.frame} containing 4 rows and 9 variables
 }
@@ -11,6 +11,6 @@
 test_poland_mm
 }
 \description{
-A \code{data.frame} containing the four species from poland used for testing
+A \code{data.frame} containing the multimedia four species from poland used for testing
 }
 \keyword{datasets}
