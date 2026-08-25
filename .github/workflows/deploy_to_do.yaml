@@ -26,46 +26,35 @@ jobs:
           echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
-      - name: Debug files
-        run: ls -lah
 
       - name: Deploy with Docker Compose     
         env:
-         SERVER_HOST: ${{ secrets.SERVER_HOST }}
-         SERVER_USER: ${{ secrets.SERVER_USER }}
-         GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         run: |      
-          # Copy gbif-nginx.conf to the server
-          scp -i ~/.ssh/deploy_key ./gbif-nginx.conf ${SERVER_USER}@${SERVER_HOST}:/opt/glatar/gbif-nginx.conf
-          
-          # copy docker-compose.yaml 
-          # scp -i ~/.ssh/deploy_key ./docker-compose.yaml ${SERVER_USER}@${SERVER_HOST}:/opt/glatar/docker-compose.yaml
-        
-          
-          # login into the server 
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_HOST} << EOF
+          # Ensure destination folder exists on server
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_HOST} "mkdir -p /opt/gbif"
 
-          set -e
-          # go into the folder 
-        
-          cd /opt/gltar
+          # Copy configuration files
+          scp -i ~/.ssh/deploy_key ./gbif-nginx.conf ${SERVER_USER}@${SERVER_HOST}:/opt/gbif/gbif-nginx.conf
+          scp -i ~/.ssh/deploy_key ./docker-compose.yaml ${SERVER_USER}@${SERVER_HOST}:/opt/gbif/docker-compose.yaml
           
-          # Login to GHCR
+          # Run deployment commands on remote server
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_HOST} << EOF
+          set -e
+          cd /opt/gbif
           
           echo "${GHCR_TOKEN}" | docker login ghcr.io -u benjaminhlina --password-stdin
 
-          # docker compose everything together 
           docker compose pull
-
-          # add down 
-          docker compose down
+          docker compose down --remove-orphans
           
-          docker compose up -d --scale shiny=3 --remove-orphans
+          # Scale gbif-app service specifically
+          docker compose up -d --scale gbif-app=3
 
           docker image prune -f
-
           docker compose ps
-
           EOF
 
       - name: Cleanup SSH Key
