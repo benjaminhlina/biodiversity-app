@@ -11,3 +11,17 @@
 #'    \item{enumName}{The enumerated name used by gbif}
 #' }
 "countries"
+
+#' A `data.frame` containing the four species from poland used for testing
+#'
+#'
+#' @format `data.frame` containing 10 rows and 42 variables
+#'
+"test_poland_occ"
+
+#' A `data.frame` containing the four species from poland used for testing
+#'
+#'
+#' @format `data.frame` containing 4 rows and 9 variables
+#'
+"test_poland_mm"

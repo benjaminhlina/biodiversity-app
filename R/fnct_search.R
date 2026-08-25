@@ -55,4 +55,5 @@ search_species <- function(session, input, con, selected_country = NULL) {
     ),
     server = TRUE
   )
+  invisible(species_choices)
 }
