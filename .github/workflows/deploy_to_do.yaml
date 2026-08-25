@@ -51,7 +51,7 @@ jobs:
           docker compose down --remove-orphans
           
           # Scale gbif-app service specifically
-          docker compose up -d --scale gbif-app=3
+          docker compose up -d --scale shiny-app=3
 
           docker image prune -f
           docker compose ps
