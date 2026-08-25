@@ -21,6 +21,12 @@ The app can be accessed at [gbif.glatar.org](https://gbif.glatar.org/) and provi
     e. If a user selects a point a suite of information about the species that was observed appears, including a link, if available, to a photo 
     of the speices 
 
+Extra features are the following: 
+
+1. Performance optimization skill - the provided data was moved from `.csv` to a DuckDB database with the app connecting to this database. Once could also use DuckDB in coordination with `.parquet` files. I choose for this project to use DuckDB over PostgreSQL due to its usage of OLAP and its ability to work quickly with larger data that does not need user specific access. For a project that use a PostgreSQL database to provide user specific access, ACID Compliance, and potentially high rates of user submissions (i.e., writes) please check out [glatar.org](glatar.org).
+
+2. Infrastructure skill - The app is built to be compiled as an R package. There are several GitHub actions (GHA) that are described below that first use R CMD check to assess the package and whether it can be safely built. Once completed, the package is then deployed into a Docker container that uses Shiny server. Once that GHA is complete, another GHA use Docker composer to deploy in coordination the App container, a nginx container (reverse proxy), and a certbot container (HTTPS certification) to ensure the app is deployed properly. Lastly a GHA checks to see if the containers are deployed and the site is running. 
+
 
 # Installation and Running the App
 The `{gbif}` package can be installed in R using the following: 
