@@ -1,6 +1,7 @@
 services:
   gbif-nginx:
     image: nginx:latest
+    container_name: gbif-nginx
     restart: unless-stopped
     volumes:
       - ./gbif-nginx.conf:/etc/nginx/nginx.conf:ro
