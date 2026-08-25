@@ -57,15 +57,17 @@ home_server <- function(id, con, main_input, home_sidebar_vals) {
     })
 
     # ----- create base data ------
-    base_map_dat <- shiny::reactive({
-      shiny::req(home_sidebar_vals())
-      data <- get_map_data(con = con, input = home_sidebar_vals())
 
-      if (!is.null(data)) {
-        data <- data |>
-          dplyr::collect()
-      }
-    })
+    base_map_dat <- create_base_data(con, input_source = home_sidebar_vals)
+    # base_map_dat <- shiny::reactive({
+    #   shiny::req(home_sidebar_vals())
+    #   data <- get_map_data(con = con, input = home_sidebar_vals())
+
+    #   if (!is.null(data)) {
+    #     data <- data |>
+    #       dplyr::collect()
+    #   }
+    # })
 
     # ----- create date range for slider ------
     output$date_range_ui <- shiny::renderUI({
@@ -88,21 +90,22 @@ home_server <- function(id, con, main_input, home_sidebar_vals) {
       )
     })
     # ----- filter data based on slider inputs -----
+    final_map_dat <- create_filtered_data(data = base_map_dat, input = input)
 
-    final_map_dat <- shiny::reactive({
-      shiny::req(base_map_dat())
-      df <- base_map_dat()
-      shiny::req(!is.null(df))
+    # final_map_dat <- shiny::reactive({
+    #   shiny::req(base_map_dat())
+    #   df <- base_map_dat()
+    #   shiny::req(!is.null(df))
 
-      if (!is.null(input$date_range)) {
-        df <- df |>
-          dplyr::filter(
-            date_time >= input$date_range[1],
-            date_time <= input$date_range[2]
-          )
-      }
-      df
-    })
+    #   if (!is.null(input$date_range)) {
+    #     df <- df |>
+    #       dplyr::filter(
+    #         date_time >= input$date_range[1],
+    #         date_time <= input$date_range[2]
+    #       )
+    #   }
+    #   df
+    # })
 
     # ---- I like having this in the log files -----
     shiny::observe({
